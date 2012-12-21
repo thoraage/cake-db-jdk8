@@ -3,8 +3,8 @@ package cakeexample;
 public interface RealDbModule extends DbModule {
     class RealDb implements Db {
         @Override
-        public String getData() {
-            return "Real cake tastes goooood!";
+        public String[] getNames() {
+            return new String[] { "Real cake tastes goooood!" };
         }
     }
 

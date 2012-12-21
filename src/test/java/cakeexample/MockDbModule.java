@@ -3,8 +3,8 @@ package cakeexample;
 public interface MockDbModule extends DbModule {
     class MockDb implements Db {
         @Override
-        public String getData() {
-            return "*Yuck* plastic fantastic";
+        public String[] getNames() {
+            return new String[] { "*Yuck* plastic fantastic" };
         }
     }
     @Override

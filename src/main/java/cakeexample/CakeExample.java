@@ -2,7 +2,9 @@ package cakeexample;
 
 public class CakeExample {
     static public void main(String[] args) {
-        System.out.println(new CakeImpl().getDb().getData());
+        for (String name : new CakeImpl().getDb().getNames()) {
+            System.out.println(name);
+        }
     }
 }
 
