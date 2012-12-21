@@ -1,4 +1,6 @@
-package cakeexample;
+package cakeexample.db;
+
+import cakeexample.ConfigModule;
 
 import java.util.HashMap;
 import java.util.Map;

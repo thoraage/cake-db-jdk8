@@ -1,5 +1,6 @@
 package cakeexample;
 
+import cakeexample.db.MockDbModule;
 import org.junit.Assert;
 import org.junit.Test;
 

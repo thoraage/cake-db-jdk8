@@ -1,5 +1,7 @@
-package cakeexample;
+package cakeexample.db;
 
+import cakeexample.ConfigModule;
+import cakeexample.SingletonModule;
 import cakeexample.util.DbUtil;
 
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Map;
 import static cakeexample.util.Throwables.propagate;
 
 public interface JdbcDbModule extends DbModule, ConfigModule, SingletonModule {
-    class JdbcDb implements cakeexample.Db {
+    class JdbcDb implements Db {
         final private DbUtil dbUtil;
 
         public JdbcDb(JdbcDbModule module) {

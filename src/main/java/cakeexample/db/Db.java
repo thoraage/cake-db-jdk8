@@ -1,4 +1,4 @@
-package cakeexample;
+package cakeexample.db;
 
 import java.util.List;
 

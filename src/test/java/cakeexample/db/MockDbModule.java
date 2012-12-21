@@ -1,4 +1,7 @@
-package cakeexample;
+package cakeexample.db;
+
+import cakeexample.db.Db;
+import cakeexample.db.DbModule;
 
 import java.util.List;
 

@@ -1,5 +1,8 @@
-package cakeexample;
+package cakeexample.db;
 
+import cakeexample.SingletonModuleImpl;
+import cakeexample.db.H2MemConfigModule;
+import cakeexample.db.JdbcDbModule;
 import org.junit.Test;
 
 import static cakeexample.util.SetUtil.asSet;
