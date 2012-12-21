@@ -32,6 +32,6 @@ public interface JdbcDbModule extends DbModule, ConfigModule, SingletonModule {
 
     @Override
     default Db getDb() {
-        return get(JdbcDb::new, this);
+        return getSingleton().get(JdbcDb::new, this);
     }
 }
