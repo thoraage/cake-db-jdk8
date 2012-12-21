@@ -2,29 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>jdk8-cake</groupId>
-  <artifactId>jdk8-cake</artifactId>
-  <version>1.0</version>
+    <groupId>jdk8-cake</groupId>
+    <artifactId>jdk8-cake</artifactId>
+    <version>1.0</version>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <build>
-      <plugins>
-          <plugin>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                  <compilerVersion>8</compilerVersion>
-              </configuration>
-          </plugin>
-      </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <executable>/opt/local/packages/jdk1.8.0-lambda-b68/bin/javac</executable>
+                    <source>8</source>
+                    <target>8</target>
+                    <compilerVersion>8</compilerVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
