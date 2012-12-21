@@ -7,7 +7,7 @@ public class CakeTest {
 
     @Test
     public void getData() {
-        Assert.assertEquals("*Yuck* plastic fantastic", new MockCake().getDb().getNames()[0]);
+        Assert.assertEquals("*Yuck* plastic fantastic", new MockCake().getDb().getCakes().iterator().next());
     }
 
 }

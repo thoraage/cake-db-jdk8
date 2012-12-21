@@ -1,5 +1,8 @@
 package cakeexample;
 
+import java.util.List;
+
 public interface Db {
-    String[] getNames();
+    void create(String name);
+    List<String> getCakes();
 }
