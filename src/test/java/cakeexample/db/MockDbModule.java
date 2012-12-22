@@ -1,8 +1,5 @@
 package cakeexample.db;
 
-import cakeexample.db.Db;
-import cakeexample.db.DbModule;
-
 import java.util.List;
 
 import static cakeexample.util.ListUtil.list;

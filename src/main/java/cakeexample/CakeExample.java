@@ -3,7 +3,6 @@ package cakeexample;
 import cakeexample.db.H2MemConfigModule;
 import cakeexample.db.JdbcDbModule;
 import cakeexample.web.JettyWebHandlerModule;
-import cakeexample.web.PageHandler;
 
 public class CakeExample {
     static public void main(String[] args) {
