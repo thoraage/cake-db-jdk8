@@ -1,8 +1,7 @@
 package cakeexample.db;
 
+import cakeexample.CakeConfigModule;
 import cakeexample.SingletonModuleImpl;
-import cakeexample.db.H2MemConfigModule;
-import cakeexample.db.JdbcDbModule;
 import org.junit.Test;
 
 import static cakeexample.util.SetUtil.asSet;
@@ -10,7 +9,7 @@ import static cakeexample.util.SetUtil.set;
 import static org.junit.Assert.assertEquals;
 
 public class JdbcDbTest {
-    static class TestDbModule extends SingletonModuleImpl implements H2MemConfigModule, JdbcDbModule {
+    static class TestDbModule extends SingletonModuleImpl implements CakeConfigModule, JdbcDbModule {
         @Override
         public void initialize() {
             JdbcDbModule.super.initialize();

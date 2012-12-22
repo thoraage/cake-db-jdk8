@@ -1,11 +1,9 @@
-package cakeexample.db;
-
-import cakeexample.ConfigModule;
+package cakeexample;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public interface H2MemConfigModule extends ConfigModule {
+public interface CakeConfigModule extends ConfigModule {
     @Override
     default Map<String, String> getConfiguration() {
         Map<String, String> map = new HashMap<>();
