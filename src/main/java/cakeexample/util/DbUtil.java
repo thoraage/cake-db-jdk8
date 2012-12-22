@@ -51,12 +51,4 @@ public class DbUtil {
         });
     }
 
-    public Long countRows(String name) {
-        return propagate(() -> {
-            Statement statement = propagate(connection::createStatement);
-            ResultSet resultSet = propagate(() -> statement.executeQuery("select count(*) from " + name));
-            resultSet.next();
-            return resultSet.getLong(1);
-        });
-    }
 }
