@@ -1,4 +1,7 @@
 package cakeexample.web;
 
-public class WebHandlerModule {
+public interface WebHandlerModule {
+
+    WebHandler getWebHandler();
+
 }

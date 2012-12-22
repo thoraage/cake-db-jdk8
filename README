@@ -14,7 +14,12 @@ each module. Traits in Scala are basically interfaces with state and methods. Th
 other into a concrete class or object; a cake. You can combine these modules in different ways to create different cakes
 according to different demands.
 
-h2. How is it possible?
+h2. Why?
+
+Java developers have been toiling away writing XML-files and flimsy annotations for years. It's time that they get a
+taste of the goodness that static typing were supposed to give them.
+
+h2. How?
 
 JDK8 includes among other handsome features something called virtual extension methods. This opens for adding code into
 interfaces. In order to use the code in this project now (22. december 2012) you will need to download the lambda
@@ -36,7 +41,11 @@ will return a Db-implementation:
         List<String> getCakes();
     }
 
-Other layers in the cake can now use the database through a simple call to 'module.getDb()
+By providing an implementation to the DbModule and mixing it into our cake we're making the database available to the
+other layers. A simple call to 'module.getDb().getCakes()' retrieves all our cakes.
+
+
+
 
 * Inner class doesn't real have a relationship to the interface so we inject it as module
 * Ordering important; most basic first
