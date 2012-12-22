@@ -1,3 +1,4 @@
 * Inner class doesn't real have a relationship to the interface so we inject it as module
 * Ordering important; most basic first
 * SingletonModuleImpl: Might need other implementations
+* How to initialise: Scala can declare variables in the scope

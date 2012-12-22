@@ -12,5 +12,9 @@ public class CakeExample {
 }
 
 class CakeModuleImpl extends SingletonModuleImpl implements H2MemConfigModule, JdbcDbModule {
+    @Override
+    public void initialize() {
+        JdbcDbModule.super.initialize();
+    }
 }
 

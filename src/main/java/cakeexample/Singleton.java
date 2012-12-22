@@ -1,7 +1,8 @@
 package cakeexample;
 
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 
 public interface Singleton {
-    <M, T> T get(Function<M, T> constructor, M module);
+    <M extends SingletonModule, T> T get(Class<M> clazz);
+    <M extends SingletonModule, T> void put(Class<M> clazz, Callable<T> constructor);
 }

@@ -10,7 +10,12 @@ import static cakeexample.util.SetUtil.set;
 import static org.junit.Assert.assertEquals;
 
 public class JdbcDbTest {
-    static class TestDbModule extends SingletonModuleImpl implements H2MemConfigModule, JdbcDbModule {}
+    static class TestDbModule extends SingletonModuleImpl implements H2MemConfigModule, JdbcDbModule {
+        @Override
+        public void initialize() {
+            JdbcDbModule.super.initialize();
+        }
+    }
 
     final private TestDbModule dbModule = new TestDbModule();
 

@@ -31,7 +31,12 @@ public interface JdbcDbModule extends DbModule, ConfigModule, SingletonModule {
     }
 
     @Override
+    default void initialize() {
+        getSingleton().put(JdbcDbModule.class, () -> new JdbcDb(this));
+    }
+
+    @Override
     default Db getDb() {
-        return getSingleton().get(JdbcDb::new, this);
+        return getSingleton().get(JdbcDbModule.class);
     }
 }
