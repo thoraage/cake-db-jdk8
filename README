@@ -1,4 +1,45 @@
+h1. Cake Pattern in JDK8
+
+Spring has recently released support for Scala (see http://blog.springsource.org/2012/12/10/introducing-spring-scala/).
+This of course can't go unheeded and there is only one correct way to counter this: Outlining of the Cake Pattern for
+Java. ;-)
+
+In order to create unnecessary confusion I try to illustrate the principles by implementing an extremely simple cake
+database with web frontend through the Cake Pattern.
+
+h2. What is the Cake Pattern?
+
+The Cake Pattern is dependency injection's type safe and annotation/xml-free cousin. It works by creating traits for
+each module. Traits in Scala are basically interfaces with state and methods. These traits then layered on top of each
+other into a concrete class or object; a cake. You can combine these modules in different ways to create different cakes
+according to different demands.
+
+h2. How is it possible?
+
+JDK8 includes among other handsome features something called virtual extension methods. This opens for adding code into
+interfaces. In order to use the code in this project now (22. december 2012) you will need to download the lambda
+version of JDK8. You'll find it here: http://jdk8.java.net/lambda/
+
+h2. How it's done?
+
+Each module will have a method that return the needed dependency, for example we have in my example the DbModule which
+will return a Db-implementation:
+
+    public interface DbModule {
+        Db getDb();
+    }
+
+... which returns this interface:
+
+    public interface Db {
+        void create(String name);
+        List<String> getCakes();
+    }
+
+Other layers in the cake can now use the database through a simple call to 'module.getDb()
+
 * Inner class doesn't real have a relationship to the interface so we inject it as module
 * Ordering important; most basic first
 * SingletonModuleImpl: Might need other implementations
 * How to initialise: Scala can declare variables in the scope
+* Dirty shameful details added to the framework package
