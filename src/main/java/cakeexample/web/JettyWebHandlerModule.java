@@ -1,6 +1,9 @@
 package cakeexample.web;
 
+import cakeexample.ConfigModule;
 import cakeexample.SingletonModule;
+import cakeexample.framework.web.HttpResponse;
+import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -10,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public interface JettyWebHandlerModule extends WebHandlerModule, PageHandlerModule, SingletonModule {
+public interface JettyWebHandlerModule extends WebHandlerModule, PageHandlerModule, SingletonModule, ConfigModule {
 
     public class JettyWebHandler implements WebHandler {
         final private JettyWebHandlerModule module;
@@ -23,13 +26,18 @@ public interface JettyWebHandlerModule extends WebHandlerModule, PageHandlerModu
         @Override
         public void start() {
             assertRunning(false);
-            server = new Server(0);
+            String webPort = module.getConfiguration().get("webPort");
+            server = new Server(webPort == null ? 0 : Integer.valueOf(webPort));
             server.setHandler(new AbstractHandler() {
                 public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
                     response.setContentType("text/html;charset=utf-8");
-                    response.setStatus(HttpServletResponse.SC_OK);
                     baseRequest.setHandled(true);
-                    response.getWriter().print(module.getPageHandler().handle(request.getMethod(), request.getParameterMap()));
+                    HttpResponse httpResponse = module.getPageHandler().handle(request.getMethod(), request.getParameterMap());
+                    response.setStatus(httpResponse.statusCode());
+                    if (httpResponse.isLocationSame()) {
+                        response.setHeader(HttpHeaders.LOCATION, request.getRequestURI());
+                    }
+                    response.getWriter().print(httpResponse.body());
                 }
             });
             try {
