@@ -1,4 +1,4 @@
-package cakeexample.web;
+package cakeexample.framework.web;
 
 import cakeexample.framework.web.HttpResponse;
 

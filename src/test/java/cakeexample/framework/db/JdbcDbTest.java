@@ -1,11 +1,12 @@
-package cakeexample.db;
+package cakeexample.framework.db;
 
 import cakeexample.CakeConfigModule;
-import cakeexample.SingletonModuleImpl;
+import cakeexample.JdbcDbModule;
+import cakeexample.framework.SingletonModuleImpl;
 import org.junit.Test;
 
-import static cakeexample.util.SetUtil.asSet;
-import static cakeexample.util.SetUtil.set;
+import static cakeexample.framework.util.SetUtil.asSet;
+import static cakeexample.framework.util.SetUtil.set;
 import static org.junit.Assert.assertEquals;
 
 public class JdbcDbTest {

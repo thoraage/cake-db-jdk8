@@ -1,8 +1,7 @@
-package cakeexample.web;
+package cakeexample.framework.web;
 
-import cakeexample.ConfigModule;
-import cakeexample.SingletonModule;
-import cakeexample.framework.web.HttpResponse;
+import cakeexample.framework.ConfigModule;
+import cakeexample.framework.SingletonModule;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;

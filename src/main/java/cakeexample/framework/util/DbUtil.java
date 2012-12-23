@@ -1,17 +1,17 @@
-package cakeexample.util;
+package cakeexample.framework.util;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static cakeexample.util.Throwables.propagate;
+import static cakeexample.framework.util.Throwables.propagate;
 
 public class DbUtil {
     private final Connection connection;
 
     public DbUtil(String driverClass, String url) {
-        connection = propagate(() -> {
+        connection = Throwables.propagate(() -> {
             Class.forName(driverClass);
             return DriverManager.getConnection(url);
         });
@@ -36,14 +36,14 @@ public class DbUtil {
         }
         sql = "create table if not exists " + tableName + " (\n" + sql + ")\n";
         final String s = sql;
-        propagate(() -> connection.createStatement().execute(s));
+        Throwables.propagate(() -> connection.createStatement().execute(s));
     }
 
     public <T> List<T> select(String table, Function<ResultSet, T> function) {
-        return propagate(() -> {
+        return Throwables.propagate(() -> {
             List<T> list = new ArrayList<>();
-            Statement statement = propagate(connection::createStatement);
-            ResultSet resultSet = propagate(() -> statement.executeQuery("select * from " + table));
+            Statement statement = Throwables.propagate(connection::createStatement);
+            ResultSet resultSet = Throwables.propagate(() -> statement.executeQuery("select * from " + table));
             while (resultSet.next()) {
                 list.add(function.apply(resultSet));
             }

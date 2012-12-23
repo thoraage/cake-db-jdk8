@@ -1,5 +1,6 @@
 package cakeexample.util;
 
+import cakeexample.framework.util.ListUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-import static cakeexample.util.Throwables.propagate;
+import static cakeexample.framework.util.Throwables.propagate;
 
 public class HttpUtil {
     static public String get(String url) {

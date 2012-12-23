@@ -1,7 +1,8 @@
-package cakeexample.web;
+package cakeexample;
 
-import cakeexample.db.DbModule;
+import cakeexample.framework.db.DbModule;
 import cakeexample.framework.web.HttpResponse;
+import cakeexample.framework.web.PageHandlerModule;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
 

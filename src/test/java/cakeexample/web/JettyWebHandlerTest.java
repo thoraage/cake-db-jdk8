@@ -1,8 +1,8 @@
 package cakeexample.web;
 
-import cakeexample.ConfigModule;
-import cakeexample.SingletonModuleImpl;
-import cakeexample.framework.web.HttpResponse;
+import cakeexample.framework.ConfigModule;
+import cakeexample.framework.SingletonModuleImpl;
+import cakeexample.framework.web.JettyWebHandlerModule;
 import cakeexample.util.HttpUtil;
 import org.junit.After;
 import org.junit.Before;

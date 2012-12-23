@@ -1,4 +1,4 @@
-package cakeexample.util;
+package cakeexample.framework.util;
 
 import java.util.concurrent.Callable;
 

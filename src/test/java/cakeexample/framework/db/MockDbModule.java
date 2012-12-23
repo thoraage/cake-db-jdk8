@@ -1,8 +1,8 @@
-package cakeexample.db;
+package cakeexample.framework.db;
 
 import java.util.List;
 
-import static cakeexample.util.ListUtil.list;
+import static cakeexample.framework.util.ListUtil.list;
 
 public interface MockDbModule extends DbModule {
     class MockDb implements Db {

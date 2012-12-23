@@ -1,8 +1,7 @@
 package cakeexample;
 
-import cakeexample.db.JdbcDbModule;
-import cakeexample.web.CakePageHandlerModule;
-import cakeexample.web.JettyWebHandlerModule;
+import cakeexample.framework.SingletonModuleImpl;
+import cakeexample.framework.web.JettyWebHandlerModule;
 
 class CakeStack extends SingletonModuleImpl implements CakeConfigModule, JdbcDbModule, CakePageHandlerModule, JettyWebHandlerModule {
     @Override

@@ -1,5 +1,6 @@
 package cakeexample;
 
+import cakeexample.framework.ConfigModule;
 import cakeexample.framework.util.MapBuilder;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package cakeexample;
+package cakeexample.framework;
 
 import java.util.Map;
 

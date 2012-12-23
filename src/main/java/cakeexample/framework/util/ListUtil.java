@@ -1,4 +1,4 @@
-package cakeexample.util;
+package cakeexample.framework.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

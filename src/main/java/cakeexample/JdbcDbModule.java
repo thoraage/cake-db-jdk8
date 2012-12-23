@@ -1,13 +1,14 @@
-package cakeexample.db;
+package cakeexample;
 
-import cakeexample.ConfigModule;
-import cakeexample.SingletonModule;
-import cakeexample.util.DbUtil;
+import cakeexample.framework.ConfigModule;
+import cakeexample.framework.SingletonModule;
+import cakeexample.framework.db.DbModule;
+import cakeexample.framework.util.DbUtil;
 
 import java.util.List;
 import java.util.Map;
 
-import static cakeexample.util.Throwables.propagate;
+import static cakeexample.framework.util.Throwables.propagate;
 
 public interface JdbcDbModule extends DbModule, ConfigModule, SingletonModule {
     class JdbcDb implements Db {

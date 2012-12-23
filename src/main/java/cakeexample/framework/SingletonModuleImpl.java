@@ -1,10 +1,10 @@
-package cakeexample;
+package cakeexample.framework;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import static cakeexample.util.Throwables.propagate;
+import static cakeexample.framework.util.Throwables.propagate;
 
 public abstract class SingletonModuleImpl implements SingletonModule {
     private final Singleton singleton = new MapBasedSingleton();
