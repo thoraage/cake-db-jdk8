@@ -15,7 +15,7 @@ public class JettyWebHandlerTest {
     static private class TestJettyStack extends SingletonModuleImpl implements JettyWebHandlerModule {
         @Override
         public PageHandler getPageHandler() {
-            return method -> MESSAGE;
+            return (method, parameterMap) -> MESSAGE;
         }
 
         @Override

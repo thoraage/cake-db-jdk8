@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -33,13 +34,18 @@ public class CakeStackTest {
 
     @Test
     public void addCake() {
-        throw new RuntimeException("implement");
+        String cake = "Cup cake";
+        HttpUtil.put(getUrl(), new HashMap<String, String>() {{ put("name", cake); }});
+        assertCakes(Arrays.asList(cake));
     }
 
     private void assertCakes(List<String> cakes) {
-        String html = HttpUtil.get("http://localhost:" + stack.getWebHandler().getPort());
+        String html = HttpUtil.get(getUrl());
         cakes.stream().forEach(s -> assertTrue(html.contains(s)));
     }
 
+    private String getUrl() {
+        return "http://localhost:" + stack.getWebHandler().getPort();
+    }
 
 }

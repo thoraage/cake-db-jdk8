@@ -29,7 +29,7 @@ public interface JettyWebHandlerModule extends WebHandlerModule, PageHandlerModu
                     response.setContentType("text/html;charset=utf-8");
                     response.setStatus(HttpServletResponse.SC_OK);
                     baseRequest.setHandled(true);
-                    response.getWriter().print(module.getPageHandler().handle(request.getMethod()));
+                    response.getWriter().print(module.getPageHandler().handle(request.getMethod(), request.getParameterMap()));
                 }
             });
             try {
