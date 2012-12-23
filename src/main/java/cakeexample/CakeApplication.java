@@ -1,6 +1,6 @@
 package cakeexample;
 
-public class CakeExample {
+public class CakeApplication {
     static public void main(String[] args) {
         CakeStack stack = new CakeStack();
         for (String name : stack.getDb().getCakes()) {
