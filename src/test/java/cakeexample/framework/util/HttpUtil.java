@@ -1,6 +1,5 @@
-package cakeexample.util;
+package cakeexample.framework.util;
 
-import cakeexample.framework.util.ListUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
