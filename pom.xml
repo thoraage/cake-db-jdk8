@@ -33,16 +33,27 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <jdk8_lambda_javac>${jdk8_lambda_java}c</jdk8_lambda_javac>
+        <jdk8_lambda_java>/opt/local/packages/jdk1.8.0-lambda-b68/bin/java</jdk8_lambda_java>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <executable>/opt/local/packages/jdk1.8.0-lambda-b68/bin/javac</executable>
+                    <executable>${jdk8_lambda_javac}</executable>
                     <source>8</source>
                     <target>8</target>
                     <compilerVersion>8</compilerVersion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <jvm>${jdk8_lambda_java}</jvm>
                 </configuration>
             </plugin>
         </plugins>
