@@ -81,7 +81,7 @@ public interface JettyWebHandlerModule extends WebHandlerModule, WebConfiguratio
 
     @Override
     default void initialize() {
-        getSingleton().put(JettyWebHandlerModule.class, () -> new JettyWebHandler(this));
+        getSingleton().put(JettyWebHandlerModule.class, new JettyWebHandler(this));
     }
 
     @Override

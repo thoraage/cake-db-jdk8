@@ -2,9 +2,6 @@ package cakeexample.framework;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
-
-import static cakeexample.framework.util.Throwables.propagate;
 
 public abstract class SingletonModuleImpl implements SingletonModule {
     private final Singleton singleton = new MapBasedSingleton();
@@ -28,13 +25,11 @@ public abstract class SingletonModuleImpl implements SingletonModule {
 
         @SuppressWarnings("unchecked")
         @Override
-        public <M extends SingletonModule, T> void put(Class<M> clazz, Callable<T> constructor) {
-            T t = (T) map.get(clazz);
-            if (t != null) {
+        public <M extends SingletonModule, T> void put(Class<M> clazz, T t) {
+            if (map.get(clazz) != null) {
                 throw new RuntimeException("Tried to initialize module twice");
             }
             //noinspection Convert2MethodRef
-            t = propagate(() -> constructor.call());
             map.put(clazz, t);
         }
     }
