@@ -1,6 +1,6 @@
 package cakeexample.framework.db;
 
-import cakeexample.CakeConfigModule;
+import cakeexample.CakeConfigurationModule;
 import cakeexample.JdbcDbModule;
 import cakeexample.framework.SingletonModuleImpl;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import static cakeexample.framework.util.SetUtil.set;
 import static org.junit.Assert.assertEquals;
 
 public class JdbcDbTest {
-    static class TestDbModule extends SingletonModuleImpl implements CakeConfigModule, JdbcDbModule {
+    static class TestDbModule extends SingletonModuleImpl implements CakeConfigurationModule, JdbcDbModule {
         @Override
         public void initialize() {
             JdbcDbModule.super.initialize();

@@ -27,23 +27,28 @@ version of JDK8. You'll find it here: http://jdk8.java.net/lambda/
 
 h2. How it's done?
 
-Each module will have a method that return the needed dependency, for example we have in my example the DbModule which
-will return a Db-implementation:
+Each module will have a method that return the needed dependency, for example we have in my example the
+ConfigurationModule which will, in time, return a Configuration-implementation:
 
-    public interface DbModule {
-        Db getDb();
+    public interface ConfigurationModule {
+        interface Configuration {
+        }
+        Configuration getConfiguration();
     }
 
-... which returns this interface:
+By providing an implementation to the ConfigurationModule and mixing it into our cake we're making the configuration
+available to the other layers.
 
-    public interface Db {
-        void create(String name);
-        List<String> getCakes();
+    public interface WebConfigurationModule extends ConfigurationModule {
+        interface WebConfiguration extends Configuration {
+            default Optional<Integer> getLocalPort() {
+                return Optional.empty();
+            }
+        }
+        default WebConfiguration getConfiguration() {
+            return new WebConfiguration() {};
+        }
     }
-
-By providing an implementation to the DbModule and mixing it into our cake we're making the database available to the
-other layers. A simple call to 'module.getDb().getCakes()' retrieves all our cakes.
-
 
 
 

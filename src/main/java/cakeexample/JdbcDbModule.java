@@ -1,22 +1,21 @@
 package cakeexample;
 
-import cakeexample.framework.ConfigModule;
 import cakeexample.framework.SingletonModule;
+import cakeexample.framework.db.DbConfigurationModule;
 import cakeexample.framework.db.DbModule;
 import cakeexample.framework.util.DbUtil;
 
 import java.util.List;
-import java.util.Map;
 
 import static cakeexample.framework.util.Throwables.propagate;
 
-public interface JdbcDbModule extends DbModule, ConfigModule, SingletonModule {
+public interface JdbcDbModule extends DbModule, DbConfigurationModule, SingletonModule {
     class JdbcDb implements Db {
         final private DbUtil dbUtil;
 
         public JdbcDb(JdbcDbModule module) {
-            Map<String,String> configuration = module.getConfiguration();
-            dbUtil = new DbUtil(configuration.get("databaseDriverClass"), configuration.get("databaseUrl"));
+            DbConfiguration configuration = module.getConfiguration();
+            dbUtil = new DbUtil(configuration.getDatabaseDriverClass(), configuration.getDatabaseUrl());
             dbUtil.createTableIfNotExists("cakes", "name");
         }
 

@@ -1,6 +1,5 @@
 package cakeexample.framework.web;
 
-import cakeexample.framework.ConfigModule;
 import cakeexample.framework.SingletonModule;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Request;
@@ -12,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public interface JettyWebHandlerModule extends WebHandlerModule, PageHandlerModule, SingletonModule, ConfigModule {
+public interface JettyWebHandlerModule extends WebHandlerModule, WebConfigurationModule, PageHandlerModule, SingletonModule {
 
     public class JettyWebHandler implements WebHandler {
         final private JettyWebHandlerModule module;
@@ -25,8 +24,8 @@ public interface JettyWebHandlerModule extends WebHandlerModule, PageHandlerModu
         @Override
         public void start() {
             assertRunning(false);
-            String webPort = module.getConfiguration().get("webPort");
-            server = new Server(webPort == null ? 0 : Integer.valueOf(webPort));
+            Integer port = module.getConfiguration().getLocalPort().orElse(0);
+            server = new Server(port);
             server.setHandler(new AbstractHandler() {
                 public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
                     response.setContentType("text/html;charset=utf-8");
