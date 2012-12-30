@@ -1,8 +1,8 @@
 h1. Cake Pattern in JDK8
 
 Spring has recently released support for Scala (see http://blog.springsource.org/2012/12/10/introducing-spring-scala/).
-This of course can't go unheeded and there is only one correct way to counter this: Outlining of the Cake Pattern for
-Java. ;-)
+This of course can't go unheeded and there is only one correct way to counter this: Outlining the Cake Pattern for Java
+;-)
 
 In order to create unnecessary confusion I try to illustrate the principles by implementing an extremely simple cake
 database with web frontend through the Cake Pattern.
@@ -22,15 +22,56 @@ taste of the goodness that static typing were supposed to give them.
 h2. How?
 
 JDK8 includes among other handsome features something called virtual extension methods. This opens for adding code into
-interfaces. In order to use the code in this project now (22. december 2012) you will need to download the lambda
-version of JDK8. You'll find it here: http://jdk8.java.net/lambda/
+interfaces. Since we still can't have state in interfaces I've implemented that through the SingletonModule interface
+and the SingletonModuleImpl class.
+
+In order to use the code in this project now (22. december 2012) you will need to download the lambda version of JDK8.
+You'll find it here: http://jdk8.java.net/lambda/
 
 h2. How it's done?
 
-Each module will have a method that return the needed dependency. If we start from the top it looks like this:
+If we start from the top it looks like this:
 
+    class CakeStack extends SingletonModuleImpl implements CakeConfigurationModule, JdbcDbModule, CakePageHandlerModule, JettyWebHandlerModule {
+        @Override
+        public void initialize() {
+            JdbcDbModule.super.initialize();
+            JettyWebHandlerModule.super.initialize();
+        }
+    }
 
+This represent a complete runnable stack. To start using this stack we need only instantiate it and start the WebHandler:
 
+    new CakeStack().getWebHandler().start();
+
+The CakeStack contain only concrete implementations of all the modules and we could change easily change the
+implementations when needed. For example by inserting a MongoDbModule instead of the JdbcDbModule. This will in  no way
+change how the CakePageHandlerModule can get cakes from the the database by calling '???.getDb().getCakes()'.
+
+Each module will have a method that return the needed dependency. Adding code to interfaces enables us to add as many
+modules as we please. Each module on the other hand is implemented as generic as possible:
+
+    public interface JdbcDbModule extends DbModule, DbConfigurationModule, SingletonModule {
+        class JdbcDb implements Db {
+            ...
+        }
+        @Override
+        default void initialize() {
+            getSingleton().put(JdbcDbModule.class, new JdbcDb());
+        }
+        @Override
+        default Db getDb() {
+            return getSingleton().get(JdbcDbModule.class);
+        }
+    }
+
+Here we request the DbConfigurationModule, but we have no dependency on how it is implemented. That makes it simple to
+have one implementation for test and a completely different for production. We could for example have an implementation
+with dynamic proxies and property files where we would define the JDBC driver class like this:
+
+    dbConfiguration.databaseDriverClass=org.h2.Driver
+
+The concrete class
 
 
 * Inner class doesn't real have a relationship to the interface so we inject it as module
