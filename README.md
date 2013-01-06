@@ -91,6 +91,7 @@ The concrete class
 
 <div id="disqus_thread"></div>
 <script type="text/javascript">
+
 var disqus_shortname = 'cakedbjdk8poc';
 (function() {
 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
