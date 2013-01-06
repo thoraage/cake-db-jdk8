@@ -88,3 +88,15 @@ The concrete class
 * SingletonModuleImpl: Might need other implementations
 * How to initialise: Scala can declare variables in the scope
 * Dirty shameful details added to the framework package
+
+<div id="disqus_thread"></div>
+<script
+   type="text/javascript"
+   src="http://disqus.com/forums/cakedbjdk8poc/embed.js">
+</script>
+<noscript>
+  <a href="http://cakedbjdk8poc.disqus.com/?url=ref">View the discussion thread.</a>
+</noscript>
+<a href="http://disqus.com" class="dsq-brlink">
+  blog comments powered by <span class="logo-disqus">Disqus</span>
+</a>
