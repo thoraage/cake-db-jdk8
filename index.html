@@ -4,30 +4,40 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Cake Pattern in JDK8 by thoraage</title>
-
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/thoraage/cake-db-jdk8">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/thoraage/cake-db-jdk8/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/thoraage/cake-db-jdk8/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
     <div class="wrapper">
-      <header>
-        <h1>Cake Pattern in JDK8</h1>
-        <p>Evolve beyond dependency injection</p>
 
-        <p class="view"><a href="https://github.com/thoraage/cake-db-jdk8">View the Project on GitHub <small>thoraage/cake-db-jdk8</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/thoraage/cake-db-jdk8/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/thoraage/cake-db-jdk8/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/thoraage/cake-db-jdk8">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
       <section>
+        <div id="title">
+          <h1>Cake Pattern in JDK8</h1>
+          <p>Evolve beyond dependency injection</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/thoraage">thoraage</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
         <p>Spring has recently released support for Scala (see <a href="http://blog.springsource.org/2012/12/10/introducing-spring-scala/">http://blog.springsource.org/2012/12/10/introducing-spring-scala/</a>). This of course can't go unheeded and there is only one correct way to counter this: Outlining the Cake Pattern for Java ;-)</p>
 
 <p>In order to create unnecessary confusion I try to illustrate the principles by implementing an extremely simple cake database with web frontend. You'll find the repository for this at: <a href="https://github.com/thoraage/cake-db-jdk8">https://github.com/thoraage/cake-db-jdk8</a></p>
@@ -142,12 +152,9 @@
 
 <p>All-in-all I'm quite happy about how this experiment unfolded. It has some drawbacks compared to applying it in Scala. Particularly the way Scala traits hold state and how nested classes in traits can directly access the trait. That aside, I believe it presents a compelling way to build an application and it would be really interesting to see how this would play out in a real project.</p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/thoraage">thoraage</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
 </html>
