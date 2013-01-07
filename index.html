@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Cake Pattern in JDK8 by thoraage</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Cake Pattern in JDK8</h1>
+        <p>Evolve beyond dependency injection</p>
+
+        <p class="view"><a href="https://github.com/thoraage/cake-db-jdk8">View the Project on GitHub <small>thoraage/cake-db-jdk8</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/thoraage/cake-db-jdk8/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/thoraage/cake-db-jdk8/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/thoraage/cake-db-jdk8">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Spring has recently released support for Scala (see <a href="http://blog.springsource.org/2012/12/10/introducing-spring-scala/">http://blog.springsource.org/2012/12/10/introducing-spring-scala/</a>). This of course can't go unheeded and there is only one correct way to counter this: Outlining the Cake Pattern for Java ;-)</p>
+
+<p>In order to create unnecessary confusion I try to illustrate the principles by implementing an extremely simple cake database with web frontend. You'll find the repository for this at: <a href="https://github.com/thoraage/cake-db-jdk8">https://github.com/thoraage/cake-db-jdk8</a></p>
+
+<p>In order to use the code in this project now (7. January 2013) you will need to download the lambda version of JDK8. You'll find it here: <a href="http://jdk8.java.net/lambda/">http://jdk8.java.net/lambda/</a></p>
+
+<h2>What is the Cake Pattern?</h2>
+
+<p>The Cake Pattern is dependency injection's type safe and annotation/xml-free cousin. It works by creating traits for each module. Traits in Scala are basically interfaces with state and methods. These traits can be layered on top of each other into a concrete class or object; a cake. You can combine these modules in any way you'd like to create different cakes according to different demands.</p>
+
+<h2>Why?</h2>
+
+<p>Java developers have been toiling away writing XML-files and flimsy annotations for years. It's time that they get a taste of the goodness that static typing were supposed to give them.</p>
+
+<h2>How?</h2>
+
+<p>JDK8 includes among other handsome features something called virtual extension methods. This opens for adding code into interfaces. If you know Scala you can think of it as Scala's traits on sedatives. However, since you can add as many interfaces as you like you now have a limited multiple inheritance. Here is an example of how such an interface might look:</p>
+
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AnInterface</span> <span class="o">{</span>
+    <span class="k">default</span> <span class="kt">void</span> <span class="nf">sayHello</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<h2>Problem with State</h2>
+
+<p>Since you still can't have state in interfaces I've implemented that through the <em>SingletonModule</em> interface and the <em>SingletonModuleImpl</em> class. This is not optimal as the class will devour our potential "real" inheritance. However, I've not found any competing use for it; yet. The <em>SingletonModule</em> looks like this:</p>
+
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SingletonModule</span> <span class="o">{</span>
+    <span class="kd">interface</span> <span class="nc">Singleton</span> <span class="o">{</span>
+        <span class="o">&lt;</span><span class="n">M</span> <span class="kd">extends</span> <span class="n">SingletonModule</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="n">get</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">);</span>
+        <span class="o">&lt;</span><span class="n">M</span> <span class="kd">extends</span> <span class="n">SingletonModule</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">put</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">,</span> <span class="n">T</span> <span class="n">t</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kt">void</span> <span class="nf">initialize</span><span class="o">();</span>
+    <span class="n">Singleton</span> <span class="nf">getSingleton</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>I've created an initialisation step here so that I don't have to worry about thread safety of lazy singletons. It also asserts fast failure. You can see how we put and get singletons in the <em>CakeJdbcDbModule</em>:</p>
+
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CakeJdbcDbModule</span> <span class="kd">extends</span> <span class="n">DbModule</span><span class="o">,</span> <span class="n">DbConfigurationModule</span><span class="o">,</span> <span class="n">SingletonModule</span> <span class="o">{</span>
+    <span class="kd">class</span> <span class="nc">JdbcDb</span> <span class="kd">implements</span> <span class="n">Db</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="k">default</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">getSingleton</span><span class="o">().</span><span class="na">put</span><span class="o">(</span><span class="n">CakeJdbcDbModule</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="k">new</span> <span class="n">JdbcDb</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="k">default</span> <span class="n">Db</span> <span class="nf">getDb</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">getSingleton</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">CakeJdbcDbModule</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>Sadly the initialisation methods will have to be initialised from the top for each module with initialisation needs.</p>
+
+<h2>The Stack</h2>
+
+<p>If we start from the top it looks like this:</p>
+
+<div class="highlight"><pre><span class="kd">class</span> <span class="nc">CakeStack</span> <span class="kd">extends</span> <span class="n">SingletonModuleImpl</span> <span class="kd">implements</span> <span class="n">CakeConfigurationModule</span><span class="o">,</span> <span class="n">CakeJdbcDbModule</span><span class="o">,</span> <span class="n">CakePageHandlerModule</span><span class="o">,</span> <span class="n">JettyWebHandlerModule</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">CakeJdbcDbModule</span><span class="o">.</span><span class="na">super</span><span class="o">.</span><span class="na">initialize</span><span class="o">();</span>
+        <span class="n">JettyWebHandlerModule</span><span class="o">.</span><span class="na">super</span><span class="o">.</span><span class="na">initialize</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>This represent a complete runnable stack. Here you can also observe the initialisation in action. Let us concentrate on the most important modules:</p>
+
+<ul>
+<li>
+<em>CakeConfigurationModule</em> - Contains configuration parameters</li>
+<li>
+<em>CakeJdbcDbModule</em> - Provides access to the database</li>
+<li>
+<em>CakePageHandlerModule</em> - Handles page requests</li>
+<li>
+<em>JettyWebHandlerModule</em> - Starts a web server and directs requests to the page handler</li>
+</ul><p>All these modules have to be added in the order of their dependencies. <em>JettyWebHandlerModule</em> last since it depends on <em>CakePageHandlerModule</em> and <em>CakeConfigurationModule</em>. <em>CakeConfigurationModule</em> first as it is not dependent on anything.</p>
+
+<p>To start using this stack we need only instantiate it and start the <em>WebHandler</em>:</p>
+
+<div class="highlight"><pre><span class="k">new</span> <span class="nf">CakeStack</span><span class="o">().</span><span class="na">getWebHandler</span><span class="o">().</span><span class="na">start</span><span class="o">();</span>
+</pre></div>
+
+<p>The <em>CakeStack</em> refer only concrete implementations of all the modules we need and we could change easily exchange the implementations when needed. For example by inserting a <em>CakeMongoDbModule</em> instead of the <em>CakeJdbcDbModule</em>. This will in no way affect how the <em>CakePageHandlerModule</em> get cakes from the database by calling 'module.getDb().getCakes()'.</p>
+
+<h2>Creating a Module</h2>
+
+<p>Each module is implementing a method that return the needed module implementation. Default methods on the interfaces enable us to add as many modules as we please. Each module on the other hand is implemented as generic as possible:</p>
+
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CakePageHandlerModule</span> <span class="kd">extends</span> <span class="n">PageHandlerModule</span><span class="o">,</span> <span class="n">DbModule</span> <span class="o">{</span>
+    <span class="kd">class</span> <span class="nc">CakePageHandler</span> <span class="kd">implements</span> <span class="n">PageHandler</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="k">default</span> <span class="n">PageHandler</span> <span class="nf">getPageHandler</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">CakePageHandler</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>In this example we extend the <em>PageHandlerModule</em> and the <em>DbModule</em>. The <em>PageHandlerModule</em> is the responsibility of this module so we implement that. The <em>DbModule</em> however, we just request and leave for someone else to provide an implementation for us. This makes it simple to have one implementation for test and a completely different for production.</p>
+
+<p>I have modelled <em>CakePageHandler</em> as a nested class of the <em>CakePageHandlerModule</em>-interface. Notice however that I need to pass the module in as a constructor argument. A nested class B in a class A will have access to A through 'A.this'. A nested class in an interface on the other hand is more akin to a static nested class and does not really have a relation to its outer class. In order to underline the connection between the entities I've chosen to keep the module implementation inside the module interface anyway.</p>
+
+<h2>Conclusion</h2>
+
+<p>All-in-all I'm quite happy about how this experiment unfolded. It has some drawbacks compared to applying it in Scala. Particularly the way Scala traits hold state and how nested classes in traits can directly access the trait. That aside, I believe it presents a compelling way to build an application and it would be really interesting to see how this would play out in a real project.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/thoraage">thoraage</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
