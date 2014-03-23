@@ -1,6 +1,5 @@
 package cakeexample;
 
-import cakeexample.framework.db.H2DbConfigurationModule;
 import cakeexample.framework.web.WebConfigurationModule;
 
 import java.util.Optional;

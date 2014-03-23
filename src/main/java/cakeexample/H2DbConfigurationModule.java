@@ -1,4 +1,6 @@
-package cakeexample.framework.db;
+package cakeexample;
+
+import cakeexample.framework.db.DbConfigurationModule;
 
 public interface H2DbConfigurationModule extends DbConfigurationModule {
 

@@ -1,5 +1,6 @@
 package cakeexample;
 
+/*
 import cakeexample.framework.SingletonModule;
 import cakeexample.framework.db.DbConfigurationModule;
 import cakeexample.framework.db.DbModule;
@@ -40,3 +41,4 @@ public interface JdbcDbModule extends DbModule, DbConfigurationModule, Singleton
         return getSingleton().get(JdbcDbModule.class);
     }
 }
+*/

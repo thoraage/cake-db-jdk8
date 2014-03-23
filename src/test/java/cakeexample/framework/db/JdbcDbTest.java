@@ -1,5 +1,6 @@
 package cakeexample.framework.db;
 
+/*
 import cakeexample.CakeConfigurationModule;
 import cakeexample.JdbcDbModule;
 import cakeexample.framework.SingletonModuleImpl;
@@ -33,3 +34,4 @@ public class JdbcDbTest {
 
 }
 
+  */
