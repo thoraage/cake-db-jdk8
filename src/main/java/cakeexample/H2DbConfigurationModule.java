@@ -12,7 +12,12 @@ public interface H2DbConfigurationModule extends DbConfigurationModule {
 
         @Override
         default String getDatabaseUrl() {
-            return "jdbc:h2:mem:";
+            return "jdbc:h2:mem:mycake";
+        }
+
+        @Override
+        default Boolean getShowSql() {
+            return true;
         }
     }
 

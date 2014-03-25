@@ -4,13 +4,17 @@ import fj.data.List;
 
 import java.sql.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import static cakeexample.framework.util.Throwables.propagate;
 
 public class DbUtil {
     private final Connection connection;
+    private final Supplier<Boolean> showSql;
 
-    public DbUtil(String driverClass, String url) {
+    public DbUtil(String driverClass, String url, Supplier<Boolean> showSql) {
+        this.showSql = showSql;
         connection = propagate(() -> {
             Class.forName(driverClass);
             return DriverManager.getConnection(url);
@@ -19,7 +23,9 @@ public class DbUtil {
 
     public void insertSingleColumn(String table, String value) {
         try {
-            PreparedStatement statement = connection.prepareStatement("insert into " + table + " values(?)");
+            String sql = "insert into " + table + " values(?)";
+            printSql(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, value);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -36,7 +42,14 @@ public class DbUtil {
         }
         sql = "create table if not exists " + tableName + " (\n" + sql + ")\n";
         final String s = sql;
+        printSql(sql);
         propagate(() -> connection.createStatement().execute(s));
+    }
+
+    private void printSql(String sql) {
+        if (showSql.get()) {
+            System.out.println("SQL: " + sql);
+        }
     }
 
     public <T> List<T> select(String table, Function<ResultSet, T> function) {

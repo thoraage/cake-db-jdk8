@@ -6,7 +6,7 @@ public interface GnurfDbSessionModule extends DbConfigurationModule{
 
     default GnurfDbSession getGnurfDbSession() {
         DbConfiguration configuration = getConfiguration();
-        return new GnurfDbSession(configuration.getDatabaseDriverClass(), configuration.getDatabaseUrl());
+        return new GnurfDbSession(configuration.getDatabaseDriverClass(), configuration.getDatabaseUrl(), configuration::getShowSql);
     }
 
 }
