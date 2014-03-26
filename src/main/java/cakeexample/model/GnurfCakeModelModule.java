@@ -25,7 +25,7 @@ public interface GnurfCakeModelModule extends CakeModelModule, GnurfDbSessionMod
             if (cake.id.isPresent()) {
                 return that.getGnurfDbSession().into(cakeTable).update(cake);
             } else {
-                return that.getGnurfDbSession().into(cakeTable).insert(cake);
+                return that.getGnurfDbSession().into(cakeTable).insert(cake).retrieve();
             }
         }
 

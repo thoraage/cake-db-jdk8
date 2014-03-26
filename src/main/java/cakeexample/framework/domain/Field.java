@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public class Field<C, V> {
 
-    private final UUID identity;
-    private final Optional<V> value;
-    private final Optional<F<C, V>> getter;
+    public final UUID identity;
+    public final Optional<V> value;
+    public final Optional<F<C, V>> getter;
 
     public Field() {
         this(UUID.randomUUID(), Optional.<V>empty(), Optional.<F<C, V>>empty());
@@ -24,6 +24,10 @@ public class Field<C, V> {
 
     public Field(UUID identity, Optional<V> value) {
         this(identity, value, Optional.<F<C, V>>empty());
+    }
+
+    public Field(F<C, V> getter) {
+        this(UUID.randomUUID(), Optional.<V>empty(), Optional.of(getter));
     }
 
     public Field<C, V> getter(F<C, V> getter) {
@@ -45,7 +49,9 @@ public class Field<C, V> {
                 return (V) field.get();
             }
         }
-        return currentValue.orElseGet(() -> { throw new RuntimeException(""); });
+        return currentValue.orElseGet(() -> {
+            throw new RuntimeException("");
+        });
     }
 
     public V get() {
@@ -58,6 +64,10 @@ public class Field<C, V> {
 
     public Field<C, V> as(V value) {
         return new Field<>(identity, Optional.of(value));
+    }
+
+    public Field<C, V> withValue(V value) {
+        return new Field<>(identity, Optional.of(value), getter);
     }
 
 }

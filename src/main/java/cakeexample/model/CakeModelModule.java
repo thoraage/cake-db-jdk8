@@ -9,9 +9,9 @@ public interface CakeModelModule {
 
 
     public class Cake {
-        public static Field<Cake, Optional<Long>> ID = new Field<Cake, Optional<Long>>().getter((Cake c) -> c.id);
-        public static Field<Cake, String> NAME = new Field<>();
-        public static Field<Cake, List<Ingredient>> INGREDIENT = new Field<>();
+        public static Field<Cake, Optional<Long>> ID = new Field<>(c -> c.id);
+        public static Field<Cake, String> NAME = new Field<>(c -> c.name);
+        public static Field<Cake, List<Ingredient>> INGREDIENTS = new Field<>(c -> c.ingredients);
         public final Optional<Long> id;
         public final String name;
         public final List<Ingredient> ingredients;
@@ -25,7 +25,7 @@ public interface CakeModelModule {
         }
 
         public Cake(Iterable<Field<Cake, ?>> fields) {
-            this(ID.get(fields), NAME.get(fields), INGREDIENT.get(fields));
+            this(ID.get(fields), NAME.get(fields), INGREDIENTS.get(fields));
         }
     }
 

@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 
 /**
  * See http://java8blog.com/post/37385501926/fixing-checked-exceptions-in-java-8
+ *
  * @author Sam Beran
  */
 public class Throwables {
@@ -15,6 +16,13 @@ public class Throwables {
         return propagate(callable, RuntimeException::new);
     }
 
+    public static void propagate(PureEffect pe) throws RuntimeException {
+        propagate(() -> {
+            pe.e();
+            return null;
+        }, RuntimeException::new);
+    }
+
     public static <T, E extends Throwable> T propagate(Callable<T> callable, ExceptionWrapper<E> wrapper) throws E {
         try {
             return callable.call();
@@ -23,5 +31,9 @@ public class Throwables {
         } catch (Exception e) {
             throw wrapper.wrap(e);
         }
+    }
+
+    public interface PureEffect {
+        void e() throws Exception;
     }
 }

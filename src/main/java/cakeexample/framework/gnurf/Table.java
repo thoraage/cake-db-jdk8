@@ -15,4 +15,5 @@ public class Table<C> {
         this.columns = columns;
         this.entityConstructor = entityConstructor;
     }
+
 }

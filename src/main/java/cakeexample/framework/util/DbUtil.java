@@ -1,11 +1,13 @@
 package cakeexample.framework.util;
 
+import cakeexample.framework.gnurf.Column;
+import fj.F2;
 import fj.data.List;
 
 import java.sql.*;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 import static cakeexample.framework.util.Throwables.propagate;
 
@@ -55,8 +57,8 @@ public class DbUtil {
     public <T> List<T> select(String table, Function<ResultSet, T> function) {
         return propagate(() -> {
             List<T> list = List.nil();
-            Statement statement = propagate(connection::createStatement);
-            ResultSet resultSet = propagate(() -> statement.executeQuery("select * from " + table));
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from " + table);
             while (resultSet.next()) {
                 list = list.cons(function.apply(resultSet));
             }
@@ -64,4 +66,16 @@ public class DbUtil {
         });
     }
 
+    public <C> Optional<Long> insert(String table, List<Column<C, ?>> columns) {
+        return propagate(() -> {
+            F2<String,String,String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
+            String sql = "insert into " + table + " (" +
+                    columns.map(c -> c.name).foldLeft(concatWithCommas, "") + ") values (" +
+                    columns.map(c -> "?").foldLeft(concatWithCommas, "") + ")";
+            printSql(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            columns.zipIndex().foreachDo(p2 -> propagate(() -> preparedStatement.setString(p2._2() + 1, (String) p2._1().field.value.get())));
+            return Optional.empty();
+        });
+    }
 }
