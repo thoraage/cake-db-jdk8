@@ -2,7 +2,7 @@ package cakeexample.framework.gnurf;
 
 import cakeexample.framework.domain.Field;
 
-public class Column<C, V> extends Field<C, V> {
+public class Column<C, V> {
     public final String name;
     public final Field<C, V> field;
 

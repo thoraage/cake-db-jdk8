@@ -12,17 +12,13 @@ public class Field<C, V> {
     public final Optional<V> value;
     public final Optional<F<C, V>> getter;
 
-    public Field() {
-        this(UUID.randomUUID(), Optional.<V>empty(), Optional.<F<C, V>>empty());
-    }
-
-    public Field(UUID identity, Optional<V> value, Optional<F<C, V>> getter) {
+    private Field(UUID identity, Optional<V> value, Optional<F<C, V>> getter) {
         this.identity = identity;
         this.value = value;
         this.getter = getter;
     }
 
-    public Field(UUID identity, Optional<V> value) {
+    private Field(UUID identity, Optional<V> value) {
         this(identity, value, Optional.<F<C, V>>empty());
     }
 
@@ -35,7 +31,7 @@ public class Field<C, V> {
     }
 
     public V get(Iterable<Field<C, ?>> fields, V currentValue) {
-        return get(fields, Optional.<V>of(currentValue));
+        return get(fields, Optional.of(currentValue));
     }
 
     public V get(Iterable<Field<C, ?>> fields) {
@@ -50,7 +46,7 @@ public class Field<C, V> {
             }
         }
         return currentValue.orElseGet(() -> {
-            throw new RuntimeException("");
+            throw new RuntimeException("No value");
         });
     }
 
@@ -63,11 +59,11 @@ public class Field<C, V> {
     }
 
     public Field<C, V> as(V value) {
-        return new Field<>(identity, Optional.of(value));
-    }
-
-    public Field<C, V> withValue(V value) {
         return new Field<>(identity, Optional.of(value), getter);
     }
 
+    @Override
+    public String toString() {
+        return "identity: " + identity + ", value: " + value;
+    }
 }

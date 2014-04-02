@@ -19,20 +19,10 @@ public class DbUtil {
         this.showSql = showSql;
         connection = propagate(() -> {
             Class.forName(driverClass);
-            return DriverManager.getConnection(url);
+            Connection connection = DriverManager.getConnection(url);
+            connection.setAutoCommit(true);
+            return connection;
         });
-    }
-
-    public void insertSingleColumn(String table, String value) {
-        try {
-            String sql = "insert into " + table + " values(?)";
-            printSql(sql);
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, value);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void createTableIfNotExists(String tableName, String... columnNames) {
@@ -58,7 +48,9 @@ public class DbUtil {
         return propagate(() -> {
             List<T> list = List.nil();
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("select * from " + table);
+            String sql = "select * from " + table;
+            printSql(sql);
+            ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 list = list.cons(function.apply(resultSet));
             }
@@ -75,6 +67,7 @@ public class DbUtil {
             printSql(sql);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             columns.zipIndex().foreachDo(p2 -> propagate(() -> preparedStatement.setString(p2._2() + 1, (String) p2._1().field.value.get())));
+            preparedStatement.execute();
             return Optional.empty();
         });
     }

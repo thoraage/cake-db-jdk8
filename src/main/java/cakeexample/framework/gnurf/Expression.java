@@ -36,15 +36,15 @@ public class Expression<C> {
         throw new RuntimeException("Not implemented");
     }
 
-    public InsertContinuation insert(C t) {
-        return new InsertContinuation(dbUtil.insert(table.name, table.columns.map(c -> harmoniseTypes(c, t))));
+    public InsertContinuation insert(C entity) {
+        return new InsertContinuation(dbUtil.insert(table.name, table.columns.map(c -> harmoniseTypes(c, entity))));
     }
 
     private static <C, V> Column<C, V> harmoniseTypes(Column<C, V> c, C entity) {
-        return c.withField(c.field.withValue(c.field.getter.get().f(entity)));
+        return c.withField(c.field.as(c.field.getter.get().f(entity)));
     }
 
-    class FColumnToField<T> implements F<Column<?, T>, Field<?, T>> {
+    class FColumnToField<V> implements F<Column<?, V>, Field<?, V>> {
         private final ResultSet r;
 
         public FColumnToField(ResultSet r) {
@@ -52,8 +52,8 @@ public class Expression<C> {
         }
 
         @Override
-        public Field<?, T> f(Column<?, T> c) {
-            return c.as(getValue(r, c));
+        public Field<?, V> f(Column<?, V> c) {
+            return c.field.as(getValue(r, c));
         }
     }
 
@@ -65,7 +65,7 @@ public class Expression<C> {
         }
 
         public C retrieve() {
-            throw new RuntimeException("Not implemeted");
+            throw new RuntimeException("Not implemented");
         }
     }
 
