@@ -1,14 +1,16 @@
 package cakeexample.framework.gnurf;
 
+import cakeexample.framework.domain.AbstractField;
 import cakeexample.framework.domain.Field;
-import cakeexample.framework.util.DbUtil;
 import fj.F;
+import fj.P2;
 import fj.data.List;
 
 import java.sql.ResultSet;
 import java.util.Optional;
 
 import static cakeexample.framework.util.Throwables.propagate;
+import static fj.data.vector.V2.p;
 
 public class Expression<C> {
     private final DbUtil dbUtil;
@@ -21,15 +23,9 @@ public class Expression<C> {
 
     public List<C> selectAll() {
         return dbUtil.select(table.name, (ResultSet r) -> {
-            F f = new FColumnToField<>(r);
             //noinspection unchecked
-            return table.entityConstructor.apply(table.columns.map(f));
+            return table.entityConstructor.apply(table.columns.map(c -> dbUtil.columnMapper(c).f(P2.p(r, c)));
         });
-    }
-
-    private <T> T getValue(ResultSet r, Column<?, T> c) {
-        //noinspection unchecked
-        return (T) propagate(() -> r.getString(c.name));
     }
 
     public C update(C c) {
@@ -41,10 +37,10 @@ public class Expression<C> {
     }
 
     private static <C, V> Column<C, V> harmoniseTypes(Column<C, V> c, C entity) {
-        return c.withField(c.field.as(c.field.getter.get().f(entity)));
+        return c.withField(c.field.as(c.field.getter().get().f(entity)));
     }
 
-    class FColumnToField<V> implements F<Column<?, V>, Field<?, V>> {
+    class FColumnToField<V> implements F<Column<?, V>, AbstractField<?, V>> {
         private final ResultSet r;
 
         public FColumnToField(ResultSet r) {
@@ -52,7 +48,7 @@ public class Expression<C> {
         }
 
         @Override
-        public Field<?, V> f(Column<?, V> c) {
+        public AbstractField<?, V> f(Column<?, V> c) {
             return c.field.as(getValue(r, c));
         }
     }

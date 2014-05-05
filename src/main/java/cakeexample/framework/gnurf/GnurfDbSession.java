@@ -1,7 +1,5 @@
 package cakeexample.framework.gnurf;
 
-import cakeexample.framework.util.DbUtil;
-
 import java.util.function.Supplier;
 
 public class GnurfDbSession {

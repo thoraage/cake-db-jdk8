@@ -2,21 +2,30 @@ package cakeexample.framework.domain;
 
 import fj.data.List;
 
-public class Entity {
-    public static Field<Entity, String> NAME = new Field<>(e -> e.name);
-    public final String name;
+import java.util.Optional;
 
-    public Entity(String name) {
+public class Entity {
+    public static AbstractField<Entity, String> NAME = Field.field(String.class, e -> e.name);
+    public static AbstractField<Entity, Optional<String>> DESCRIPTION = OptionalField.optional(Field.<Entity, String>field(String.class), Entity::description);
+    private final String name;
+    private final Optional<String> description;
+
+    public Entity(String name, Optional<String> description) {
         this.name = name;
+        this.description = description;
     }
 
     public Entity(Iterable<Field<Entity, ?>> fields) {
-        this(NAME.get(fields));
+        this(NAME.from(fields), DESCRIPTION.from(fields));
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Entity && FieldComparator.<Entity>create(List.list(NAME)).equals(this, (Entity) obj);
+        return obj instanceof Entity && FieldComparator.<Entity>create(List.list(NAME, DESCRIPTION)).equals(this, (Entity) obj);
+    }
+
+    public Optional<String> description() {
+        return description;
     }
 }
 

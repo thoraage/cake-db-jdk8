@@ -20,6 +20,11 @@
             <version>1.7.6</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.6</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
@@ -49,10 +54,10 @@
         </dependency>
     </dependencies>
 
-    <properties>
+    <!--properties>
         <jdk8_lambda_javac>${jdk8_lambda_java}c</jdk8_lambda_javac>
         <jdk8_lambda_java>/opt/local/packages/jdk1.8.0-lambda-b68/bin/java</jdk8_lambda_java>
-    </properties>
+    </properties-->
 
     <build>
         <plugins>
@@ -60,7 +65,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <executable>${jdk8_lambda_javac}</executable>
+                    <!--executable>${jdk8_lambda_javac}</executable-->
                     <source>8</source>
                     <target>8</target>
                     <compilerVersion>8</compilerVersion>
@@ -69,7 +74,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <jvm>${jdk8_lambda_java}</jvm>
+                    <!--jvm>${jdk8_lambda_java}</jvm-->
                 </configuration>
             </plugin>
         </plugins>

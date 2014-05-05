@@ -1,17 +1,22 @@
 package cakeexample.model;
 
 import cakeexample.framework.domain.Field;
+import cakeexample.framework.domain.ListField;
+import cakeexample.framework.domain.OptionalField;
 import fj.data.List;
 
 import java.util.Optional;
+
+import static cakeexample.framework.domain.ListField.list;
+import static cakeexample.framework.domain.OptionalField.optional;
 
 public interface CakeModelModule {
 
 
     public class Cake {
-        public static Field<Cake, Optional<Long>> ID = new Field<>(c -> c.id);
-        public static Field<Cake, String> NAME = new Field<>(c -> c.name);
-        public static Field<Cake, List<Ingredient>> INGREDIENTS = new Field<>(c -> c.ingredients);
+        public static OptionalField<Cake, Long> ID = optional(Field.<Cake, Long>field(Long.class), c -> c.id);
+        public static Field<Cake, String> NAME = Field.field(String.class, c -> c.name);
+        public static ListField<Cake, Ingredient> INGREDIENTS = list(Field.field(Ingredient.class), c -> c.ingredients);
         public final Optional<Long> id;
         public final String name;
         public final List<Ingredient> ingredients;
@@ -25,7 +30,7 @@ public interface CakeModelModule {
         }
 
         public Cake(Iterable<Field<Cake, ?>> fields) {
-            this(ID.get(fields), NAME.get(fields), INGREDIENTS.get(fields));
+            this(ID.from(fields), NAME.from(fields), INGREDIENTS.from(fields));
         }
     }
 

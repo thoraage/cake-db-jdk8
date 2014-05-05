@@ -2,18 +2,15 @@ package cakeexample.framework.domain;
 
 import fj.data.List;
 
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-
 public class FieldComparator<E> {
 
-    private final List<Field<E, ?>> fields;
+    private final List<AbstractField<E, ?>> fields;
 
-    public FieldComparator(List<Field<E, ?>> fields) {
+    public FieldComparator(List<AbstractField<E, ?>> fields) {
         this.fields = fields;
     }
 
-    public static <C> FieldComparator<C> create(List<Field<C, ?>> fields) {
+    public static <C> FieldComparator<C> create(List<AbstractField<C, ?>> fields) {
         return new FieldComparator<>(fields);
     }
 
@@ -28,8 +25,8 @@ public class FieldComparator<E> {
         });
     }
 
-    private Object getFieldValue(E e1, Field<E, ?> f) {
-        return f.getter.orElseThrow(() -> new RuntimeException("")).f(e1);
+    private Object getFieldValue(E e1, AbstractField<E, ?> f) {
+        return f.getter().orElseThrow(() -> new RuntimeException("Value missing for field " + f)).f(e1);
     }
 
 }

@@ -4,7 +4,7 @@ package cakeexample;
 import cakeexample.framework.SingletonModule;
 import cakeexample.framework.db.DbConfigurationModule;
 import cakeexample.framework.db.DbModule;
-import cakeexample.framework.util.DbUtil;
+import cakeexample.framework.gnurf.DbUtil;
 
 import java.util.List;
 

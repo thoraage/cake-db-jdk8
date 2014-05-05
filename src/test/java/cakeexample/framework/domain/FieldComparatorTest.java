@@ -2,17 +2,19 @@ package cakeexample.framework.domain;
 
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static fj.data.List.list;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class FieldComparatorTest {
 
-    private FieldComparator<Entity> fieldComparator = FieldComparator.create(list(Entity.NAME));
+    private FieldComparator<Entity> fieldComparator = FieldComparator.create(list(Entity.NAME, Entity.DESCRIPTION));
 
     @Test
     public void equals() {
-        assertThat(fieldComparator.equals(new Entity("a"), new Entity("a")), equalTo(true));
+        assertThat(fieldComparator.equals(new Entity("a", Optional.empty()), new Entity("a", Optional.empty())), equalTo(true));
     }
 
     @Test
@@ -22,13 +24,13 @@ public class FieldComparatorTest {
 
     @Test
     public void notEquals() {
-        assertThat(fieldComparator.equals(new Entity("a"), new Entity("b")), equalTo(false));
+        assertThat(fieldComparator.equals(new Entity("a", Optional.empty()), new Entity("a", Optional.of("tull"))), equalTo(false));
     }
 
     @Test
     public void notEqualsNull() {
-        assertThat(fieldComparator.equals(new Entity("a"), null), equalTo(false));
-        assertThat(fieldComparator.equals(null, new Entity("a")), equalTo(false));
+        assertThat(fieldComparator.equals(new Entity("a", Optional.empty()), null), equalTo(false));
+        assertThat(fieldComparator.equals(null, new Entity("a", Optional.empty())), equalTo(false));
     }
 
 }

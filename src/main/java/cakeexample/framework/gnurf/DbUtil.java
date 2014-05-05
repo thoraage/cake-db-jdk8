@@ -1,8 +1,11 @@
-package cakeexample.framework.util;
+package cakeexample.framework.gnurf;
 
-import cakeexample.framework.gnurf.Column;
+import cakeexample.framework.domain.Field;
 import fj.F2;
+import fj.P2;
 import fj.data.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Optional;
@@ -12,6 +15,7 @@ import java.util.function.Supplier;
 import static cakeexample.framework.util.Throwables.propagate;
 
 public class DbUtil {
+    private final static Logger logger = LoggerFactory.getLogger(DbUtil.class);
     private final Connection connection;
     private final Supplier<Boolean> showSql;
 
@@ -38,9 +42,23 @@ public class DbUtil {
         propagate(() -> connection.createStatement().execute(s));
     }
 
+    public ColumnResultMapper columnMapper(Column<?, ?> column) {
+        // TODO create these outside and map them here?
+        if (column.field instanceof Field) {
+            //noinspection unchecked
+            return (cr) -> cr._2().field.as(getValue(cr._1(), cr._2()));
+        }
+        throw new RuntimeException("Column mapping for column " + column + " not found");
+    }
+
+    private <T> T getValue(ResultSet r, Column<?, T> c) {
+        //noinspection unchecked
+        return (T) propagate(() -> r.getString(c.name));
+    }
+
     private void printSql(String sql) {
         if (showSql.get()) {
-            System.out.println("SQL: " + sql);
+            logger.info("SQL: " + sql);
         }
     }
 
@@ -60,15 +78,35 @@ public class DbUtil {
 
     public <C> Optional<Long> insert(String table, List<Column<C, ?>> columns) {
         return propagate(() -> {
-            F2<String,String,String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
+            F2<String, String, String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
             String sql = "insert into " + table + " (" +
                     columns.map(c -> c.name).foldLeft(concatWithCommas, "") + ") values (" +
                     columns.map(c -> "?").foldLeft(concatWithCommas, "") + ")";
             printSql(sql);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            columns.zipIndex().foreachDo(p2 -> propagate(() -> preparedStatement.setString(p2._2() + 1, (String) p2._1().field.value.get())));
+            columns.zipIndex().foreachDo(p2 -> propagate(() -> setColumnValue(preparedStatement, p2)));
             preparedStatement.execute();
-            return Optional.empty();
+            return Optional.<Long>empty();
         });
+    }
+
+    private <C> void setColumnValue(PreparedStatement preparedStatement, P2<Column<C, ?>, Integer> p2) throws SQLException {
+        // TODO some abstraction needed
+        Object value = p2._1().field.value().get();
+        int index = p2._2() + 1;
+        setColumnValue(preparedStatement, index, value);
+    }
+
+    private void setColumnValue(PreparedStatement preparedStatement, int index, Object value) throws SQLException {
+        if (value == null) {
+            preparedStatement.setObject(index, null);
+        } else if (value instanceof Optional) {
+            //noinspection unchecked
+            setColumnValue(preparedStatement, index, ((Optional) value).orElse(null));
+        } else if (String.class.isAssignableFrom(value.getClass())) {
+            preparedStatement.setString(index, (String) value);
+        } else {
+            throw new RuntimeException("Unable to handle type " + value.getClass());
+        }
     }
 }
