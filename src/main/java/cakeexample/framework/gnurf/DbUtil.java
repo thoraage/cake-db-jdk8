@@ -1,6 +1,8 @@
 package cakeexample.framework.gnurf;
 
+import cakeexample.framework.domain.AbstractField;
 import cakeexample.framework.domain.Field;
+import cakeexample.framework.domain.OptionalField;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
@@ -42,13 +44,19 @@ public class DbUtil {
         propagate(() -> connection.createStatement().execute(s));
     }
 
-    public ColumnResultMapper columnMapper(Column<?, ?> column) {
+    public <C, V> ColumnResultMapper<C, V> columnMapper(Column<C, V> column) {
         // TODO create these outside and map them here?
         if (column.field instanceof Field) {
             //noinspection unchecked
-            return (cr) -> cr._2().field.as(getValue(cr._1(), cr._2()));
+            return (r, c) -> c.field.as(getValue(r, c));
+        } else if (column.field instanceof OptionalField) {
+            return (r, c) -> {
+                OptionalField<C, V> field = (OptionalField<C, V>) c.field;
+                //noinspection unchecked
+                return (AbstractField<C, V>) field.as(Optional.ofNullable(getValue(r, c)));
+            };
         }
-        throw new RuntimeException("Column mapping for column " + column + " not found");
+        throw new RuntimeException("Column mapping for column " + column + " with field type " + column.field.getClass() + " not found");
     }
 
     private <T> T getValue(ResultSet r, Column<?, T> c) {

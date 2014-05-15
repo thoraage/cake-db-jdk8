@@ -15,7 +15,7 @@ public class Entity {
         this.description = description;
     }
 
-    public Entity(Iterable<Field<Entity, ?>> fields) {
+    public Entity(Iterable<AbstractField<Entity, ?>> fields) {
         this(NAME.from(fields), DESCRIPTION.from(fields));
     }
 

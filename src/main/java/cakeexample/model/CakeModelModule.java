@@ -1,5 +1,6 @@
 package cakeexample.model;
 
+import cakeexample.framework.domain.AbstractField;
 import cakeexample.framework.domain.Field;
 import cakeexample.framework.domain.ListField;
 import cakeexample.framework.domain.OptionalField;
@@ -29,7 +30,7 @@ public interface CakeModelModule {
             //this.author = author;
         }
 
-        public Cake(Iterable<Field<Cake, ?>> fields) {
+        public Cake(Iterable<AbstractField<Cake, ?>> fields) {
             this(ID.from(fields), NAME.from(fields), INGREDIENTS.from(fields));
         }
     }

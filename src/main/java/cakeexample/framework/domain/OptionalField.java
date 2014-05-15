@@ -32,8 +32,28 @@ public class OptionalField<C, V> implements AbstractField<C, Optional<V>> {
     }
 
     @Override
+    public boolean isSameAs(AbstractField<?, ?> field) {
+        return field.identity().equals(field.identity());
+    }
+
+    @Override
+    public UUID identity() {
+        return field.identity();
+    }
+
+    @Override
+    public Optional<V> get() {
+        if (value.isPresent()) {
+            return value.get();
+        }
+        throw new NoValueForFieldException("No value for field " + field.identity(), this);
+    }
+
+    @Override
     public Optional<Optional<V>> value() {
         return value;
     }
+
+    public Field<C, V> field() { return field; }
 
 }

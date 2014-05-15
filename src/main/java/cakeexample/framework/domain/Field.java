@@ -2,17 +2,13 @@ package cakeexample.framework.domain;
 
 
 import fj.F;
-import fj.data.HashMap;
 
-import javax.swing.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import static fj.data.HashMap.hashMap;
-
 public class Field<C, V> implements AbstractField<C, V> {
 
-    public final UUID identity;
+    private final UUID identity;
     private final Optional<V> value;
     public final Optional<Class<?>> clazz;
     private final Optional<F<C, V>> getter;
@@ -50,24 +46,8 @@ public class Field<C, V> implements AbstractField<C, V> {
 //        return new Field<>(identity, value, baseClazz, Optional.of(getter), name);
 //    }
 
-    public V get(Iterable<Field<C, ?>> fields, V currentValue) {
-        return get(fields, Optional.of(currentValue));
-    }
-
-    public V from(Iterable<Field<C, ?>> fields) {
-        return get(fields, Optional.<V>empty());
-    }
-
-    public V get(Iterable<Field<C, ?>> fields, Optional<V> currentValue) {
-        for (Field<?, ?> field : fields) {
-            if (field.isSameAs(this)) {
-                //noinspection unchecked
-                return (V) field.get();
-            }
-        }
-        return currentValue.orElseGet(() -> {
-            throw new RuntimeException("No value");
-        });
+    public V get(Iterable<AbstractField<C, ?>> fields, V currentValue) {
+        return from(fields, Optional.of(currentValue));
     }
 
     public V get() {
@@ -87,8 +67,14 @@ public class Field<C, V> implements AbstractField<C, V> {
         return value;
     }
 
-    public boolean isSameAs(Field<?, ?> fieldReference) {
-        return identity.equals(fieldReference.identity);
+    @Override
+    public boolean isSameAs(AbstractField<?, ?> field) {
+        return identity.equals(field.identity());
+    }
+
+    @Override
+    public UUID identity() {
+        return identity;
     }
 
     public Field<C, V> as(V value) {
