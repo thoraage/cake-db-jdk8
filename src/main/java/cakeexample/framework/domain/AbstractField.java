@@ -35,7 +35,11 @@ public interface AbstractField<C, V> {
         throw new RuntimeException("Not implemented");
     }
 
-    boolean isSameAs(AbstractField<?, ?> field);
+    default boolean isSameAs(AbstractField<?, ?> field) {
+        return identity().equals(field.identity());
+    }
+
+    Class<?> clazz();
 
     UUID identity();
 

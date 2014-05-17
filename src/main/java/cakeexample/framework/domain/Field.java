@@ -10,11 +10,11 @@ public class Field<C, V> implements AbstractField<C, V> {
 
     private final UUID identity;
     private final Optional<V> value;
-    public final Optional<Class<?>> clazz;
+    private final Class<?> clazz;
     private final Optional<F<C, V>> getter;
     public final Optional<String> name;
 
-    protected Field(UUID identity, Optional<V> value, Optional<Class<?>> clazz, Optional<F<C, V>> getter, Optional<String> name) {
+    protected Field(UUID identity, Optional<V> value, Class<?> clazz, Optional<F<C, V>> getter, Optional<String> name) {
         this.identity = identity;
         this.value = value;
         this.clazz = clazz;
@@ -22,29 +22,13 @@ public class Field<C, V> implements AbstractField<C, V> {
         this.name = name;
     }
 
-//    protected Field(UUID identity, Optional<V> value, Optional<Class<?>> clazz, Optional<F<C, V>> getter, Optional<String> name) {
-//        this(identity, value, clazz, getter, name);
-//    }
-
-//    protected F5<UUID, Optional<V>, Optional<Class<V>>, Optional<F<C, V>>, Optional<String>, Field<C, V>> getMainConstructor() {
-//        return (a, b, c, d, e) -> new Field(a, b, c, d, e);
-//    }
-
-//    private Field(UUID identity, Optional<V> value) {
-//        this(identity, value, Optional.<F<C, V>>empty());
-//    }
-
     public static <C, V> Field<C, V> field(Class<V> clazz, F<C, V> getter) {
-        return new Field<>(UUID.randomUUID(), Optional.<V>empty(), Optional.of(clazz), Optional.of(getter), Optional.empty());
+        return new Field<>(UUID.randomUUID(), Optional.<V>empty(), clazz, Optional.of(getter), Optional.empty());
     }
 
     public static <C, V> Field<C, V> field(Class<V> clazz) {
-        return new Field<>(UUID.randomUUID(), Optional.<V>empty(), Optional.of(clazz), Optional.empty(), Optional.empty());
+        return new Field<>(UUID.randomUUID(), Optional.<V>empty(), clazz, Optional.empty(), Optional.empty());
     }
-
-//    public Field<C, V> getter(F<C, V> getter) {
-//        return new Field<>(identity, value, baseClazz, Optional.of(getter), name);
-//    }
 
     public V get(Iterable<AbstractField<C, ?>> fields, V currentValue) {
         return from(fields, Optional.of(currentValue));
@@ -68,8 +52,8 @@ public class Field<C, V> implements AbstractField<C, V> {
     }
 
     @Override
-    public boolean isSameAs(AbstractField<?, ?> field) {
-        return identity.equals(field.identity());
+    public Class<?> clazz() {
+        return clazz;
     }
 
     @Override
@@ -87,11 +71,4 @@ public class Field<C, V> implements AbstractField<C, V> {
         return "identity: " + identity + ", value: " + value;
     }
 
-//    public Field<C, List<V>> list() {
-//        throw new RuntimeException("Not implemented");
-//    }
-
-//    public Field<C, V> name(String name) {
-//        return new Field<>(identity, value, baseClazz, getter, optional, Optional.of(name));
-//    }
 }

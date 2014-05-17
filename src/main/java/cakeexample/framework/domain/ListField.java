@@ -25,6 +25,11 @@ public class ListField<C, V> implements AbstractField<C, List<V>> {
     }
 
     @Override
+    public Class<?> clazz() {
+        return field.clazz();
+    }
+
+    @Override
     public boolean isSameAs(AbstractField<?, ?> field) {
         return field.identity().equals(field.identity());
     }

@@ -15,6 +15,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static cakeexample.framework.util.Throwables.propagate;
+import static fj.data.hlist.HList.HCons;
+import static fj.data.hlist.HList.HNil;
 
 public class DbUtil {
     private final static Logger logger = LoggerFactory.getLogger(DbUtil.class);
@@ -31,12 +33,24 @@ public class DbUtil {
         });
     }
 
-    public void createTableIfNotExists(String tableName, String... columnNames) {
+    public void createTableIfNotExists(String tableName, List<HCons<String, HCons<Class<?>, HNil>>> columns) {
         String sql = "";
-        for (String columnName : columnNames) {
+        for (HCons<String, HCons<Class<?>, HNil>> column : columns) {
             if (sql.length() != 0)
                 sql += ", ";
-            sql += "  " + columnName + " varchar";
+            final String columnType;
+            Class<?> clazz = column.tail().head();
+            if (String.class.isAssignableFrom(clazz)) {
+                columnType = "varchar";
+            } else if (Integer.class.isAssignableFrom(clazz)) {
+                columnType = "integer";
+            } else if (Long.class.isAssignableFrom(clazz)) {
+                columnType = "bigint";
+            } else {
+                throw new RuntimeException("Unknown type for column creation " + clazz);
+            }
+            String name = column.head();
+            sql += "  " + name + " " + columnType;
         }
         sql = "create table if not exists " + tableName + " (\n" + sql + ")\n";
         final String s = sql;
@@ -61,7 +75,7 @@ public class DbUtil {
 
     private <T> T getValue(ResultSet r, Column<?, T> c) {
         //noinspection unchecked
-        return (T) propagate(() -> r.getString(c.name));
+        return (T) propagate(() -> r.getObject(c.name));
     }
 
     private void printSql(String sql) {
@@ -99,7 +113,7 @@ public class DbUtil {
     }
 
     private <C> void setColumnValue(PreparedStatement preparedStatement, P2<Column<C, ?>, Integer> p2) throws SQLException {
-        // TODO some abstraction needed
+        // TODO some abstraction needed (value type plugins)
         Object value = p2._1().field.value().get();
         int index = p2._2() + 1;
         setColumnValue(preparedStatement, index, value);
@@ -111,10 +125,8 @@ public class DbUtil {
         } else if (value instanceof Optional) {
             //noinspection unchecked
             setColumnValue(preparedStatement, index, ((Optional) value).orElse(null));
-        } else if (String.class.isAssignableFrom(value.getClass())) {
-            preparedStatement.setString(index, (String) value);
         } else {
-            throw new RuntimeException("Unable to handle type " + value.getClass());
+            preparedStatement.setObject(index, value);
         }
     }
 }

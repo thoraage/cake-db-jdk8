@@ -1,6 +1,11 @@
 package cakeexample.framework.gnurf;
 
+import fj.data.hlist.HList;
+
 import java.util.function.Supplier;
+
+import static fj.data.hlist.HList.cons;
+import static fj.data.hlist.HList.nil;
 
 public class GnurfDbSession {
 
@@ -18,7 +23,10 @@ public class GnurfDbSession {
         return new Expression<>(dbUtil, table);
     }
 
-    public <T> void create(Table<T> table) {
-        dbUtil.createTableIfNotExists(table.name, table.columns.map(column -> column.name).array(String[].class));
+    public final void create(Table<?>... tables) {
+        for (Table<?> table : tables) {
+            // TODO need abstraction for different field types
+            dbUtil.createTableIfNotExists(table.name, table.columns.map(column -> cons(column.name, cons(column.field.clazz(), nil()))));
+        }
     }
 }

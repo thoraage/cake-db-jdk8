@@ -14,7 +14,7 @@ public class FieldComparatorTest {
 
     @Test
     public void equals() {
-        assertThat(fieldComparator.equals(new Entity("a", Optional.empty()), new Entity("a", Optional.empty())), equalTo(true));
+        assertThat(fieldComparator.equals(new Entity("a", Optional.empty(), 27), new Entity("a", Optional.empty(), 27)), equalTo(true));
     }
 
     @Test
@@ -24,13 +24,13 @@ public class FieldComparatorTest {
 
     @Test
     public void notEquals() {
-        assertThat(fieldComparator.equals(new Entity("a", Optional.empty()), new Entity("a", Optional.of("tull"))), equalTo(false));
+        assertThat(fieldComparator.equals(new Entity("a", Optional.empty(), 27), new Entity("a", Optional.of("tull"), 27)), equalTo(false));
     }
 
     @Test
     public void notEqualsNull() {
-        assertThat(fieldComparator.equals(new Entity("a", Optional.empty()), null), equalTo(false));
-        assertThat(fieldComparator.equals(null, new Entity("a", Optional.empty())), equalTo(false));
+        assertThat(fieldComparator.equals(new Entity("a", Optional.empty(), 27), null), equalTo(false));
+        assertThat(fieldComparator.equals(null, new Entity("a", Optional.empty(), 27)), equalTo(false));
     }
 
 }

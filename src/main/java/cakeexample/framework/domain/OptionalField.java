@@ -32,13 +32,13 @@ public class OptionalField<C, V> implements AbstractField<C, Optional<V>> {
     }
 
     @Override
-    public boolean isSameAs(AbstractField<?, ?> field) {
-        return field.identity().equals(field.identity());
+    public UUID identity() {
+        return field.identity();
     }
 
     @Override
-    public UUID identity() {
-        return field.identity();
+    public Class<?> clazz() {
+        return field.clazz();
     }
 
     @Override
