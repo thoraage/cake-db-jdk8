@@ -33,13 +33,13 @@ public class DbUtil {
         });
     }
 
-    public void createTableIfNotExists(String tableName, List<HCons<String, HCons<Class<?>, HNil>>> columns) {
+    public <C> void createTableIfNotExists(String tableName, List<Column<C, ?>> columns) {
         String sql = "";
-        for (HCons<String, HCons<Class<?>, HNil>> column : columns) {
+        for (Column<?, ?> column : columns) {
             if (sql.length() != 0)
                 sql += ", ";
             final String columnType;
-            Class<?> clazz = column.tail().head();
+            Class<?> clazz = column.field.clazz();
             if (String.class.isAssignableFrom(clazz)) {
                 columnType = "varchar";
             } else if (Integer.class.isAssignableFrom(clazz)) {
@@ -49,8 +49,10 @@ public class DbUtil {
             } else {
                 throw new RuntimeException("Unknown type for column creation " + clazz);
             }
-            String name = column.head();
-            sql += "  " + name + " " + columnType;
+            String name = column.name;
+            String primaryKeyText = column.primaryKey() ? " primary key" : "";
+            String autoIncrementText = column.autoIncrement() ? " auto_increment" : "";
+            sql += "  " + name + " " + columnType + primaryKeyText + autoIncrementText;
         }
         sql = "create table if not exists " + tableName + " (\n" + sql + ")\n";
         final String s = sql;

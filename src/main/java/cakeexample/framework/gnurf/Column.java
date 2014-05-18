@@ -1,22 +1,42 @@
 package cakeexample.framework.gnurf;
 
 import cakeexample.framework.domain.AbstractField;
-import cakeexample.framework.domain.Field;
 
 public class Column<C, V> {
     public final String name;
     public final AbstractField<C, V> field;
+    private final boolean autoIncrement;
+    private final boolean primaryKey;
 
-    public Column(String name, AbstractField<C, V> field) {
+    public Column(String name, AbstractField<C, V> field, boolean primaryKey, boolean autoIncrement) {
         this.name = name;
         this.field = field;
+        this.primaryKey = primaryKey;
+        this.autoIncrement = autoIncrement;
     }
 
     public static <C, V> Column<C, V> column(String name, AbstractField<C, V> field) {
-        return new Column<>(name, field);
+        return new Column<>(name, field, false, false);
     }
 
     public Column<C, V> withField(AbstractField<C, V> field) {
-        return new Column<>(name, field);
+        return new Column<>(name, field, primaryKey, autoIncrement);
     }
+
+    public Column<C, V> primaryKey(boolean value) {
+        return new Column<>(name, field, value, autoIncrement);
+    }
+
+    public Column<C, V> autoIncrement(boolean value) {
+        return new Column<>(name, field, primaryKey, value);
+    }
+
+    public boolean primaryKey() {
+        return primaryKey;
+    }
+
+    public boolean autoIncrement() {
+        return autoIncrement;
+    }
+
 }

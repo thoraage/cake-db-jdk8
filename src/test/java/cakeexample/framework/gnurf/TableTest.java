@@ -22,7 +22,7 @@ public class TableTest {
     @Before
     public void create() {
         entityTable = new Table<Entity>("tull", list(column("name", Entity.NAME), column("description", Entity.DESCRIPTION), column("age", Entity.AGE)), Entity::new);
-        entityWPKTable = new Table<EntityWPK>("tullwpk", list(column("id", EntityWPK.ID), column("name", EntityWPK.NAME)), EntityWPK::new);
+        entityWPKTable = new Table<EntityWPK>("tullwpk", list(column("id", EntityWPK.ID).primaryKey(true).autoIncrement(true), column("name", EntityWPK.NAME)), EntityWPK::new);
         session = new GnurfDbSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
         session.create(entityTable, entityWPKTable);
     }

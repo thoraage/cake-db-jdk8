@@ -26,7 +26,7 @@ public class GnurfDbSession {
     public final void create(Table<?>... tables) {
         for (Table<?> table : tables) {
             // TODO need abstraction for different field types
-            dbUtil.createTableIfNotExists(table.name, table.columns.map(column -> cons(column.name, cons(column.field.clazz(), nil()))));
+            dbUtil.createTableIfNotExists(table.name, table.columns);
         }
     }
 }
