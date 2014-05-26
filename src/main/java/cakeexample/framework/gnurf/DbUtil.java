@@ -131,4 +131,16 @@ public class DbUtil {
             preparedStatement.setObject(index, value);
         }
     }
+
+    public <V> Optional<V> getLastGeneratedValue() {
+        // TODO Only handles single generated values. Can multiple occur; any dimension, rows or columns?
+        return propagate(() -> {
+            ResultSet resultSet = connection.createStatement().getGeneratedKeys();
+            if (resultSet.next()) {
+                //noinspection unchecked
+                return Optional.of((V) resultSet.getObject(1));
+            }
+            return Optional.<V>empty();
+        });
+    }
 }

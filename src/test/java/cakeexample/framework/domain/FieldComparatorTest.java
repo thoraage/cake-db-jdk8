@@ -10,11 +10,11 @@ import static org.junit.Assert.assertThat;
 
 public class FieldComparatorTest {
 
-    private FieldComparator<Entity> fieldComparator = FieldComparator.create(list(Entity.NAME, Entity.DESCRIPTION));
+    private FieldComparator<EntityNoPK> fieldComparator = FieldComparator.create(list(EntityNoPK.NAME, EntityNoPK.DESCRIPTION));
 
     @Test
     public void equals() {
-        assertThat(fieldComparator.equals(new Entity("a", Optional.empty(), 27), new Entity("a", Optional.empty(), 27)), equalTo(true));
+        assertThat(fieldComparator.equals(new EntityNoPK("a", Optional.empty(), 27), new EntityNoPK("a", Optional.empty(), 27)), equalTo(true));
     }
 
     @Test
@@ -24,13 +24,13 @@ public class FieldComparatorTest {
 
     @Test
     public void notEquals() {
-        assertThat(fieldComparator.equals(new Entity("a", Optional.empty(), 27), new Entity("a", Optional.of("tull"), 27)), equalTo(false));
+        assertThat(fieldComparator.equals(new EntityNoPK("a", Optional.empty(), 27), new EntityNoPK("a", Optional.of("tull"), 27)), equalTo(false));
     }
 
     @Test
     public void notEqualsNull() {
-        assertThat(fieldComparator.equals(new Entity("a", Optional.empty(), 27), null), equalTo(false));
-        assertThat(fieldComparator.equals(null, new Entity("a", Optional.empty(), 27)), equalTo(false));
+        assertThat(fieldComparator.equals(new EntityNoPK("a", Optional.empty(), 27), null), equalTo(false));
+        assertThat(fieldComparator.equals(null, new EntityNoPK("a", Optional.empty(), 27)), equalTo(false));
     }
 
 }

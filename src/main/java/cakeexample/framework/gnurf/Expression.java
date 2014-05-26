@@ -45,6 +45,10 @@ public class Expression<C> {
         public C retrieve() {
             throw new RuntimeException("Not implemented");
         }
+
+        public <V> Optional<V> id() {
+            return dbUtil.getLastGeneratedValue();
+        }
     }
 
 }
