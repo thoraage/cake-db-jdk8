@@ -32,7 +32,7 @@ public class Expression<C> {
     }
 
     private static <C, V> Column<C, V> harmoniseTypes(Column<C, V> c, C entity) {
-        return c.withField(c.field.as(c.field.getter().get().f(entity)));
+        return c.withField(c.field().as(c.field().getter().get().f(entity)));
     }
 
     public class InsertContinuation {

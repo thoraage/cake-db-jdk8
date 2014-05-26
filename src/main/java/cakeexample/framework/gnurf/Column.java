@@ -3,8 +3,8 @@ package cakeexample.framework.gnurf;
 import cakeexample.framework.domain.AbstractField;
 
 public class Column<C, V> {
-    public final String name;
-    public final AbstractField<C, V> field;
+    private final String name;
+    private final AbstractField<C, V> field;
     private final boolean autoIncrement;
     private final boolean primaryKey;
 
@@ -37,6 +37,14 @@ public class Column<C, V> {
 
     public boolean autoIncrement() {
         return autoIncrement;
+    }
+
+    public AbstractField<C, V> field() {
+        return field;
+    }
+
+    public String name() {
+        return name;
     }
 
 }

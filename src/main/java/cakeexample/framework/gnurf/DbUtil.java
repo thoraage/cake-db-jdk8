@@ -15,8 +15,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static cakeexample.framework.util.Throwables.propagate;
-import static fj.data.hlist.HList.HCons;
-import static fj.data.hlist.HList.HNil;
 
 public class DbUtil {
     private final static Logger logger = LoggerFactory.getLogger(DbUtil.class);
@@ -39,7 +37,7 @@ public class DbUtil {
             if (sql.length() != 0)
                 sql += ", ";
             final String columnType;
-            Class<?> clazz = column.field.clazz();
+            Class<?> clazz = column.field().clazz();
             if (String.class.isAssignableFrom(clazz)) {
                 columnType = "varchar";
             } else if (Integer.class.isAssignableFrom(clazz)) {
@@ -49,7 +47,7 @@ public class DbUtil {
             } else {
                 throw new RuntimeException("Unknown type for column creation " + clazz);
             }
-            String name = column.name;
+            String name = column.name();
             String primaryKeyText = column.primaryKey() ? " primary key" : "";
             String autoIncrementText = column.autoIncrement() ? " auto_increment" : "";
             sql += "  " + name + " " + columnType + primaryKeyText + autoIncrementText;
@@ -62,22 +60,22 @@ public class DbUtil {
 
     public <C, V> ColumnResultMapper<C, V> columnMapper(Column<C, V> column) {
         // TODO create these outside and map them here?
-        if (column.field instanceof Field) {
+        if (column.field() instanceof Field) {
             //noinspection unchecked
-            return (r, c) -> c.field.as(getValue(r, c));
-        } else if (column.field instanceof OptionalField) {
+            return (r, c) -> c.field().as(getValue(r, c));
+        } else if (column.field() instanceof OptionalField) {
             return (r, c) -> {
-                OptionalField<C, V> field = (OptionalField<C, V>) c.field;
+                OptionalField<C, V> field = (OptionalField<C, V>) c.field();
                 //noinspection unchecked
                 return (AbstractField<C, V>) field.as(Optional.ofNullable(getValue(r, c)));
             };
         }
-        throw new RuntimeException("Column mapping for column " + column + " with field type " + column.field.getClass() + " not found");
+        throw new RuntimeException("Column mapping for column " + column + " with field type " + column.field().getClass() + " not found");
     }
 
     private <T> T getValue(ResultSet r, Column<?, T> c) {
         //noinspection unchecked
-        return (T) propagate(() -> r.getObject(c.name));
+        return (T) propagate(() -> r.getObject(c.name()));
     }
 
     private void printSql(String sql) {
@@ -104,7 +102,7 @@ public class DbUtil {
         return propagate(() -> {
             F2<String, String, String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
             String sql = "insert into " + table + " (" +
-                    columns.map(c -> c.name).foldLeft(concatWithCommas, "") + ") values (" +
+                    columns.map(c -> c.name()).foldLeft(concatWithCommas, "") + ") values (" +
                     columns.map(c -> "?").foldLeft(concatWithCommas, "") + ")";
             printSql(sql);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -116,7 +114,7 @@ public class DbUtil {
 
     private <C> void setColumnValue(PreparedStatement preparedStatement, P2<Column<C, ?>, Integer> p2) throws SQLException {
         // TODO some abstraction needed (value type plugins)
-        Object value = p2._1().field.value().get();
+        Object value = p2._1().field().value().get();
         int index = p2._2() + 1;
         setColumnValue(preparedStatement, index, value);
     }
