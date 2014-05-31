@@ -46,7 +46,7 @@ public class Expression<C> {
             throw new RuntimeException("Not implemented");
         }
 
-        public <V> Optional<V> id() {
+        public <V extends Number> Optional<V> id() {
             return dbUtil.getLastGeneratedValue();
         }
     }

@@ -102,7 +102,7 @@ public class DbUtil {
         return propagate(() -> {
             F2<String, String, String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
             String sql = "insert into " + table + " (" +
-                    columns.map(c -> c.name()).foldLeft(concatWithCommas, "") + ") values (" +
+                    columns.map(Column::name).foldLeft(concatWithCommas, "") + ") values (" +
                     columns.map(c -> "?").foldLeft(concatWithCommas, "") + ")";
             printSql(sql);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -130,13 +130,19 @@ public class DbUtil {
         }
     }
 
-    public <V> Optional<V> getLastGeneratedValue() {
+    public <V extends Number> Optional<V> getLastGeneratedValue() {
         // TODO Only handles single generated values. Can multiple occur; any dimension, rows or columns?
         return propagate(() -> {
             ResultSet resultSet = connection.createStatement().getGeneratedKeys();
             if (resultSet.next()) {
                 //noinspection unchecked
-                return Optional.of((V) resultSet.getObject(1));
+                V number = (V) resultSet.getObject(1);
+                // In H2 appearently, we get result even if there has not been generated any keys yet
+                // (that result will be zero)
+                if (number.longValue() == 0) {
+                    return Optional.empty();
+                }
+                return Optional.of(number);
             }
             return Optional.<V>empty();
         });

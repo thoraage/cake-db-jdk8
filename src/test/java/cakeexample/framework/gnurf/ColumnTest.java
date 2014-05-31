@@ -13,7 +13,7 @@ import static fj.data.List.list;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class TableTest {
+public class ColumnTest {
 
     private GnurfDbSession session;
     private Table<EntityNoPK> entityNoPKTable;
@@ -34,7 +34,7 @@ public class TableTest {
     }
 
     @Test
-    public void insertAndSelect() {
+    public void insert() {
         session.into(entityTable).insert(new Entity(Optional.empty(), "tull"));
         assertThat(session.from(entityTable).selectAll(), equalTo(list(new Entity(Optional.of(1L), "tull"))));
     }
