@@ -1,6 +1,6 @@
 package cakeexample.model;
 
-import cakeexample.framework.gnurf.Column;
+import cakeexample.framework.gnurf.AbstractColumn;
 import cakeexample.framework.gnurf.GnurfDbSessionModule;
 import cakeexample.framework.gnurf.Table;
 import fj.data.List;
@@ -12,7 +12,7 @@ public interface GnurfCakeModelModule extends CakeModelModule, GnurfDbSessionMod
 
     public class GnurfCakeDb implements CakeDb {
         private final GnurfCakeModelModule that;
-        private static List<Column<Cake, ?>> cakeColumns = list(column("id", Cake.ID), column("name", Cake.NAME));
+        private static List<AbstractColumn<Cake, ?>> cakeColumns = list(column("id", Cake.ID), column("name", Cake.NAME));
         public static Table<Cake> cakeTable = new Table<>("cakes", cakeColumns, Cake::new);
 
         public GnurfCakeDb(GnurfCakeModelModule that) {

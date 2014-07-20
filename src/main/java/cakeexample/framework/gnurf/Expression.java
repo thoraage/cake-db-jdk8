@@ -19,7 +19,7 @@ public class Expression<C> {
         return dbUtil.select(table.name, (ResultSet r) -> table.entityConstructor.apply(table.columns.map(c -> harmoniseGenerics(r, c))));
     }
 
-    private <V> AbstractField<C, V> harmoniseGenerics(ResultSet r, Column<C, V> c) {
+    private <V> AbstractField<C, V> harmoniseGenerics(ResultSet r, AbstractColumn<C, V> c) {
         return dbUtil.columnMapper(c).f(r, c);
     }
 
@@ -31,7 +31,7 @@ public class Expression<C> {
         return new InsertContinuation(dbUtil.insert(table.name, table.columns.map(c -> harmoniseTypes(c, entity))));
     }
 
-    private static <C, V> Column<C, V> harmoniseTypes(Column<C, V> c, C entity) {
+    private static <C, V> AbstractColumn<C, V> harmoniseTypes(AbstractColumn<C, V> c, C entity) {
         return c.withField(c.field().as(c.field().getter().get().f(entity)));
     }
 

@@ -31,9 +31,9 @@ public class DbUtil {
         });
     }
 
-    public <C> void createTableIfNotExists(String tableName, List<Column<C, ?>> columns) {
+    public <C> void createTableIfNotExists(String tableName, List<AbstractColumn<C, ?>> columns) {
         String sql = "";
-        for (Column<?, ?> column : columns) {
+        for (AbstractColumn<?, ?> column : columns) {
             if (sql.length() != 0)
                 sql += ", ";
             final String columnType;
@@ -44,6 +44,8 @@ public class DbUtil {
                 columnType = "integer";
             } else if (Long.class.isAssignableFrom(clazz)) {
                 columnType = "bigint";
+            } else if (column instanceof OneToOneColumn) {
+                throw new NotImplementedException();
             } else {
                 throw new RuntimeException("Unknown type for column creation " + clazz);
             }
@@ -58,7 +60,7 @@ public class DbUtil {
         propagate(() -> connection.createStatement().execute(s));
     }
 
-    public <C, V> ColumnResultMapper<C, V> columnMapper(Column<C, V> column) {
+    public <C, V> ColumnResultMapper<C, V> columnMapper(AbstractColumn<C, V> column) {
         // TODO create these outside and map them here?
         if (column.field() instanceof Field) {
             //noinspection unchecked
@@ -73,7 +75,7 @@ public class DbUtil {
         throw new RuntimeException("Column mapping for column " + column + " with field type " + column.field().getClass() + " not found");
     }
 
-    private <T> T getValue(ResultSet r, Column<?, T> c) {
+    private <T> T getValue(ResultSet r, AbstractColumn<?, T> c) {
         //noinspection unchecked
         return (T) propagate(() -> r.getObject(c.name()));
     }
@@ -98,11 +100,11 @@ public class DbUtil {
         });
     }
 
-    public <C> Optional<Long> insert(String table, List<Column<C, ?>> columns) {
+    public <C> Optional<Long> insert(String table, List<AbstractColumn<C, ?>> columns) {
         return propagate(() -> {
             F2<String, String, String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
             String sql = "insert into " + table + " (" +
-                    columns.map(Column::name).foldLeft(concatWithCommas, "") + ") values (" +
+                    columns.map(AbstractColumn::name).foldLeft(concatWithCommas, "") + ") values (" +
                     columns.map(c -> "?").foldLeft(concatWithCommas, "") + ")";
             printSql(sql);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -112,7 +114,7 @@ public class DbUtil {
         });
     }
 
-    private <C> void setColumnValue(PreparedStatement preparedStatement, P2<Column<C, ?>, Integer> p2) throws SQLException {
+    private <C> void setColumnValue(PreparedStatement preparedStatement, P2<AbstractColumn<C, ?>, Integer> p2) throws SQLException {
         // TODO some abstraction needed (value type plugins)
         Object value = p2._1().field().value().get();
         int index = p2._2() + 1;

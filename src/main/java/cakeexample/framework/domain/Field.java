@@ -26,7 +26,7 @@ public class Field<C, V> implements AbstractField<C, V> {
         return new Field<>(UUID.randomUUID(), Optional.<V>empty(), clazz, Optional.of(getter), Optional.empty());
     }
 
-    public static <C, V> Field<C, V> field(Class<V> clazz) {
+    public static <C, V> Field<C, V> field(Class<?> clazz) {
         return new Field<>(UUID.randomUUID(), Optional.<V>empty(), clazz, Optional.empty(), Optional.empty());
     }
 

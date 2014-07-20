@@ -5,6 +5,6 @@ import fj.F2;
 
 import java.sql.ResultSet;
 
-public interface ColumnResultMapper<C, V> extends F2<ResultSet, Column<C, V>, AbstractField<C, V>> {
+public interface ColumnResultMapper<C, V> extends F2<ResultSet, AbstractColumn<C, V>, AbstractField<C, V>> {
 
 }

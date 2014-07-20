@@ -2,7 +2,7 @@ package cakeexample.framework.gnurf;
 
 import cakeexample.framework.domain.AbstractField;
 
-public class Column<C, V> {
+public class Column<C, V> implements AbstractColumn<C, V> {
     private final String name;
     private final AbstractField<C, V> field;
     private final boolean autoIncrement;
@@ -39,10 +39,12 @@ public class Column<C, V> {
         return autoIncrement;
     }
 
+    @Override
     public AbstractField<C, V> field() {
         return field;
     }
 
+    @Override
     public String name() {
         return name;
     }
