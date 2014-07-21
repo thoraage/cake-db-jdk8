@@ -38,16 +38,12 @@ public class DbUtil {
                 sql += ", ";
             final String columnType;
             Class<?> clazz = column.field().clazz();
-            if (String.class.isAssignableFrom(clazz)) {
-                columnType = "varchar";
-            } else if (Integer.class.isAssignableFrom(clazz)) {
-                columnType = "integer";
-            } else if (Long.class.isAssignableFrom(clazz)) {
-                columnType = "bigint";
+            if (column instanceof Column) {
+                columnType = getH2ColumnType(clazz);
             } else if (column instanceof OneToOneColumn) {
-                throw new NotImplementedException();
+                columnType = getH2ColumnType(((OneToOneColumn) column).foreignPrimaryKey().field().clazz());
             } else {
-                throw new RuntimeException("Unknown type for column creation " + clazz);
+                throw new NotImplementedException();
             }
             String name = column.name();
             String primaryKeyText = column.primaryKey() ? " primary key" : "";
@@ -58,6 +54,20 @@ public class DbUtil {
         final String s = sql;
         printSql(sql);
         propagate(() -> connection.createStatement().execute(s));
+    }
+
+    private String getH2ColumnType(Class<?> clazz) {
+        String columnType;
+        if (String.class.isAssignableFrom(clazz)) {
+            columnType = "varchar";
+        } else if (Integer.class.isAssignableFrom(clazz)) {
+            columnType = "integer";
+        } else if (Long.class.isAssignableFrom(clazz)) {
+            columnType = "bigint";
+        } else {
+            throw new RuntimeException("Unknown type for column creation " + clazz);
+        }
+        return columnType;
     }
 
     public <C, V> ColumnResultMapper<C, V> columnMapper(AbstractColumn<C, V> column) {

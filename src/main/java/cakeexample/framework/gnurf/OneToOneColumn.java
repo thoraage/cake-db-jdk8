@@ -3,24 +3,28 @@ package cakeexample.framework.gnurf;
 import cakeexample.framework.domain.AbstractField;
 import cakeexample.framework.domain.Field;
 
-import java.util.Optional;
-
-public class OneToOneColumn<C, V> implements AbstractColumn<C, V> {
+public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
 
     private final String name;
-    private final AbstractField<C, V> field;
+    private final AbstractField<T, V> field;
+    private final AbstractColumn<?, ?> foreignPrimaryKey;
 
-    private OneToOneColumn(String name, AbstractField<C, V> field) {
+    private OneToOneColumn(String name, AbstractField<T, V> field, AbstractColumn<?, ?> foreignPrimaryKey) {
         this.name = name;
         this.field = field;
+        this.foreignPrimaryKey = foreignPrimaryKey;
     }
 
     public static <OT, T, V> OneToOneColumn<T, V> oneToOne(String name, AbstractField<T, V> field, Table<OT> foreignTable, AbstractColumn<OT, ?> foreignPrimaryKey) {
-        return new OneToOneColumn<T, V>(name, Field.field(field.clazz()));
+        return new OneToOneColumn<T, V>(name, Field.field(field.clazz()), foreignPrimaryKey);
+    }
+
+    public AbstractColumn<?, ?> foreignPrimaryKey() {
+        return foreignPrimaryKey;
     }
 
     @Override
-    public AbstractField<C, V> field() {
+    public AbstractField<T, V> field() {
         return field;
     }
 
@@ -40,7 +44,7 @@ public class OneToOneColumn<C, V> implements AbstractColumn<C, V> {
     }
 
     @Override
-    public OneToOneColumn<C, V> withField(AbstractField<C, V> field) {
-        return new OneToOneColumn<>(name, field);
+    public OneToOneColumn<T, V> withField(AbstractField<T, V> field) {
+        return new OneToOneColumn<>(name, field, foreignPrimaryKey);
     }
 }
