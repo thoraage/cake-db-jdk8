@@ -1,6 +1,13 @@
 package cakeexample.framework.gnurf;
 
 import cakeexample.framework.domain.AbstractField;
+import cakeexample.framework.domain.Field;
+import cakeexample.framework.domain.OptionalField;
+
+import java.sql.ResultSet;
+import java.util.Optional;
+
+import static cakeexample.framework.util.Throwables.propagate;
 
 public class Column<C, V> implements AbstractColumn<C, V> {
     private final String name;
@@ -21,6 +28,20 @@ public class Column<C, V> implements AbstractColumn<C, V> {
 
     public Column<C, V> withField(AbstractField<C, V> field) {
         return new Column<>(name, field, primaryKey, autoIncrement);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public AbstractField<C, V> withResult(ResultSet resultSet) {
+        if (field instanceof Field) {
+            //noinspection unchecked
+            return propagate(() -> field.as((V) resultSet.getObject(name())));
+        } else if (field instanceof OptionalField) {
+            //noinspection unchecked
+            return field.as((V) Optional.ofNullable(propagate(() -> resultSet.getObject(name()))));
+        } else {
+            throw new NotImplementedException("Unable to handle field type " + field.getClass());
+        }
     }
 
     public Column<C, V> primaryKey(boolean value) {

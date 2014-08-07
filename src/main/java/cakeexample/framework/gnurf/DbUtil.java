@@ -70,26 +70,6 @@ public class DbUtil {
         return columnType;
     }
 
-    public <C, V> ColumnResultMapper<C, V> columnMapper(AbstractColumn<C, V> column) {
-        // TODO create these outside and map them here?
-        if (column.field() instanceof Field) {
-            //noinspection unchecked
-            return (r, c) -> c.field().as(getValue(r, c));
-        } else if (column.field() instanceof OptionalField) {
-            return (r, c) -> {
-                OptionalField<C, V> field = (OptionalField<C, V>) c.field();
-                //noinspection unchecked
-                return (AbstractField<C, V>) field.as(Optional.ofNullable(getValue(r, c)));
-            };
-        }
-        throw new RuntimeException("Column mapping for column " + column + " with field type " + column.field().getClass() + " not found");
-    }
-
-    private <T> T getValue(ResultSet r, AbstractColumn<?, T> c) {
-        //noinspection unchecked
-        return (T) propagate(() -> r.getObject(c.name()));
-    }
-
     private void printSql(String sql) {
         if (showSql.get()) {
             logger.info("SQL: " + sql);

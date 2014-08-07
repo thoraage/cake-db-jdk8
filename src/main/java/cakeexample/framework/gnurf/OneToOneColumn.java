@@ -2,6 +2,12 @@ package cakeexample.framework.gnurf;
 
 import cakeexample.framework.domain.AbstractField;
 import cakeexample.framework.domain.Field;
+import cakeexample.framework.domain.OptionalField;
+
+import java.sql.ResultSet;
+import java.util.Optional;
+
+import static cakeexample.framework.util.Throwables.propagate;
 
 public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
 
@@ -46,5 +52,12 @@ public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
     @Override
     public OneToOneColumn<T, V> withField(AbstractField<T, V> field) {
         return new OneToOneColumn<>(name, field, foreignPrimaryKey);
+    }
+
+    @Override
+    public AbstractField<T, V> withResult(ResultSet resultSet) {
+        //noinspection unchecked
+//        return propagate(() -> field.as(Optional.ofNullable((T) resultSet.getObject(name))));
+        throw new NotImplementedException();
     }
 }

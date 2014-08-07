@@ -15,8 +15,9 @@ public class OneToOneEntity {
     public static OptionalField<OneToOneEntity, Long> ID = optional(Field.<OneToOneEntity, Long>field(Long.class), OneToOneEntity::id);
     public static Field<OneToOneEntity, Entity> ENTITY = field(Entity.class, OneToOneEntity::entity);
 
-    public static Table<OneToOneEntity> TABLE = new Table<OneToOneEntity>("aggregatingentity",
-            list(column("id", ID).primaryKey(true).autoIncrement(true), oneToOne("entity_id", ENTITY, Entity.TABLE, Entity.PK)), OneToOneEntity::new);
+    public static Table<OneToOneEntity> TABLE = new Table<OneToOneEntity>("aggregatingentity", list(
+            column("id", ID).primaryKey(true).autoIncrement(true),
+            oneToOne("entity_id", ENTITY, Entity.TABLE, Entity.PK)), OneToOneEntity::new);
 
     private final Optional<Long> id;
     private final Entity entity;

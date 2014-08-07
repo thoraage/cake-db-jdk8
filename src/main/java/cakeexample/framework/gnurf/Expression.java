@@ -1,6 +1,7 @@
 package cakeexample.framework.gnurf;
 
 import cakeexample.framework.domain.AbstractField;
+import fj.F;
 import fj.data.List;
 
 import java.sql.ResultSet;
@@ -16,11 +17,7 @@ public class Expression<C> {
     }
 
     public List<C> selectAll() {
-        return dbUtil.select(table.name, (ResultSet r) -> table.entityConstructor.apply(table.columns.map(c -> harmoniseGenerics(r, c))));
-    }
-
-    private <V> AbstractField<C, V> harmoniseGenerics(ResultSet r, AbstractColumn<C, V> c) {
-        return dbUtil.columnMapper(c).f(r, c);
+        return dbUtil.select(table.name, (ResultSet r) -> table.entityConstructor.apply(table.columns.map(c -> c.withResult(r))));
     }
 
     public C update(C c) {
@@ -32,7 +29,10 @@ public class Expression<C> {
     }
 
     private static <C, V> AbstractColumn<C, V> harmoniseTypes(AbstractColumn<C, V> c, C entity) {
-        return c.withField(c.field().as(c.field().getter().get().f(entity)));
+        // TODO more information in error (which table for example or get position from stack trace during creation)
+        return c.field().getter()
+                .map(f -> c.withField(c.field().as(f.f(entity))))
+                .orElseThrow(() -> new RuntimeException("Field of column " + c.name() + " missing getter function"));
     }
 
     public class InsertContinuation {
