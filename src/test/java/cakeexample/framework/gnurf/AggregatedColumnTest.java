@@ -18,26 +18,27 @@ public class AggregatedColumnTest {
     @Before
     public void create() {
         session = new GnurfDbSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
-        session.create(Entity.TABLE, OneToOneEntity.TABLE);
+        Entity.TABLE.createTableIfNotExists(session);
+        OneToOneEntity.TABLE.createTableIfNotExists(session);
     }
 
     @Test
     public void insertEntityWithInsertAggregate() {
         OneToOneEntity entity = new OneToOneEntity(empty(), new Entity(empty(), "tull"));
-        session.into(OneToOneEntity.TABLE).insert(entity);
-        assertThat(session.from(OneToOneEntity.TABLE).selectAll().length(), equalTo(1));
+        OneToOneEntity.TABLE.insert(session, entity);
+        assertThat(OneToOneEntity.TABLE.selectAll(session).length(), equalTo(1));
     }
 
     @Test
     public void insertEntityWithAggregateInserted() {
         Entity aggregate = new Entity(empty(), "tull");
-        session.into(Entity.TABLE).insert(aggregate);
-        List<Entity> aggregates = session.from(Entity.TABLE).selectAll();
+        Entity.TABLE.insert(session, aggregate);
+        List<Entity> aggregates = Entity.TABLE.selectAll(session);
         assertThat(aggregates.length(), equalTo(1));
         aggregate = aggregates.head();
         OneToOneEntity entity = new OneToOneEntity(empty(), aggregate);
-        session.into(OneToOneEntity.TABLE).insert(entity);
-        assertThat(session.from(OneToOneEntity.TABLE).selectAll().length(), equalTo(1));
+        OneToOneEntity.TABLE.insert(session, entity);
+        assertThat(OneToOneEntity.TABLE.selectAll(session).length(), equalTo(1));
     }
 
 }

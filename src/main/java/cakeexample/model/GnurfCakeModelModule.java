@@ -17,21 +17,21 @@ public interface GnurfCakeModelModule extends CakeModelModule, GnurfDbSessionMod
 
         public GnurfCakeDb(GnurfCakeModelModule that) {
             this.that = that;
-            that.getGnurfDbSession().create(cakeTable);
+            cakeTable.createTableIfNotExists(that.getGnurfDbSession());
         }
 
         @Override
         public Cake save(Cake cake) {
             if (cake.id.isPresent()) {
-                return that.getGnurfDbSession().into(cakeTable).update(cake);
+                return cakeTable.update(that.getGnurfDbSession(), cake);
             } else {
-                return that.getGnurfDbSession().into(cakeTable).insert(cake).retrieve();
+                return cakeTable.insert(that.getGnurfDbSession(), cake).retrieve();
             }
         }
 
         @Override
         public List<Cake> getCakes() {
-            return that.getGnurfDbSession().from(cakeTable).selectAll();
+            return cakeTable.selectAll(that.getGnurfDbSession()).list();
         }
     }
 

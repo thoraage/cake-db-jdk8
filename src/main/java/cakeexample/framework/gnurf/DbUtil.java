@@ -1,39 +1,33 @@
 package cakeexample.framework.gnurf;
 
-import cakeexample.framework.domain.AbstractField;
-import cakeexample.framework.domain.Field;
-import cakeexample.framework.domain.OptionalField;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static cakeexample.framework.util.Throwables.propagate;
 
 public class DbUtil {
     private final static Logger logger = LoggerFactory.getLogger(DbUtil.class);
-    private final Connection connection;
-    private final Supplier<Boolean> showSql;
 
-    public DbUtil(String driverClass, String url, Supplier<Boolean> showSql) {
-        this.showSql = showSql;
-        connection = propagate(() -> {
-            Class.forName(driverClass);
-            Connection connection = DriverManager.getConnection(url);
-            connection.setAutoCommit(true);
-            return connection;
-        });
+    private static <C, V> AbstractColumn<C, V> addEntityValue(AbstractColumn<C, V> c, C entity) {
+        // TODO more information in error (which table for example or get position from stack trace during creation)
+        //noinspection unchecked
+        return c.columnValue(entity)
+                .map(value -> c.withField(c.field().as((V) value)))
+                .orElseThrow(() -> new RuntimeException("Field of column " + c.name() + " missing getter function"));
     }
 
-    public <C> void createTableIfNotExists(String tableName, List<AbstractColumn<C, ?>> columns) {
+    public static <C> void createTableIfNotExists(GnurfDbSession session, TableCharacteristics<C> table) {
         String sql = "";
-        for (AbstractColumn<?, ?> column : columns) {
+        for (AbstractColumn<?, ?> column : table.columns()) {
             if (sql.length() != 0)
                 sql += ", ";
             final String columnType;
@@ -50,13 +44,13 @@ public class DbUtil {
             String autoIncrementText = column.autoIncrement() ? " auto_increment" : "";
             sql += "  " + name + " " + columnType + primaryKeyText + autoIncrementText;
         }
-        sql = "create table if not exists " + tableName + " (\n" + sql + ")\n";
+        sql = "create table if not exists " + table.name() + " (\n" + sql + ")\n";
         final String s = sql;
-        printSql(sql);
-        propagate(() -> connection.createStatement().execute(s));
+        printSql(session, sql);
+        propagate(() -> session.connection().createStatement().execute(s));
     }
 
-    private String getH2ColumnType(Class<?> clazz) {
+    private static String getH2ColumnType(Class<?> clazz) {
         String columnType;
         if (String.class.isAssignableFrom(clazz)) {
             columnType = "varchar";
@@ -70,48 +64,48 @@ public class DbUtil {
         return columnType;
     }
 
-    private void printSql(String sql) {
-        if (showSql.get()) {
+    private static void printSql(GnurfDbSession session, String sql) {
+        if (session.showSqlEnabled()) {
             logger.info("SQL: " + sql);
         }
     }
 
-    public <T> List<T> select(String table, Function<ResultSet, T> function) {
+    public static <C> List<C> selectAll(GnurfDbSession session, TableCharacteristics<C> table) {
         return propagate(() -> {
-            List<T> list = List.nil();
-            Statement statement = connection.createStatement();
-            String sql = "select * from " + table;
-            printSql(sql);
+            List<C> list = List.nil();
+            Statement statement = session.connection().createStatement();
+            String sql = "select * from " + table.name();
+            printSql(session, sql);
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                list = list.cons(function.apply(resultSet));
+                list = list.cons(table.entityConstructor().apply(table.columns().map(c -> c.withResult(resultSet))));
             }
             return list;
         });
     }
 
-    public <C> Optional<Long> insert(String table, List<AbstractColumn<C, ?>> columns) {
+    public static <C> Optional<Long> insert(GnurfDbSession session, TableCharacteristics<C> table, List<AbstractColumn<C, ?>> columns) {
         return propagate(() -> {
             F2<String, String, String> concatWithCommas = (s1, s2) -> s1 + (s1.isEmpty() ? "" : ", ") + s2;
-            String sql = "insert into " + table + " (" +
+            String sql = "insert into " + table.name() + " (" +
                     columns.map(AbstractColumn::name).foldLeft(concatWithCommas, "") + ") values (" +
                     columns.map(c -> "?").foldLeft(concatWithCommas, "") + ")";
-            printSql(sql);
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            printSql(session, sql);
+            PreparedStatement preparedStatement = session.connection().prepareStatement(sql);
             columns.zipIndex().foreachDo(p2 -> propagate(() -> setColumnValue(preparedStatement, p2)));
             preparedStatement.execute();
             return Optional.<Long>empty();
         });
     }
 
-    private <C> void setColumnValue(PreparedStatement preparedStatement, P2<AbstractColumn<C, ?>, Integer> p2) throws SQLException {
+    private static <C> void setColumnValue(PreparedStatement preparedStatement, P2<AbstractColumn<C, ?>, Integer> p2) throws SQLException {
         // TODO some abstraction needed (value type plugins)
         Object value = p2._1().field().value().get();
         int index = p2._2() + 1;
         setColumnValue(preparedStatement, index, value);
     }
 
-    private void setColumnValue(PreparedStatement preparedStatement, int index, Object value) throws SQLException {
+    private static void setColumnValue(PreparedStatement preparedStatement, int index, Object value) throws SQLException {
         if (value == null) {
             preparedStatement.setObject(index, null);
         } else if (value instanceof Optional) {
@@ -122,10 +116,10 @@ public class DbUtil {
         }
     }
 
-    public <V extends Number> Optional<V> getLastGeneratedValue() {
+    public static <V extends Number> Optional<V> getLastGeneratedValue(GnurfDbSession session) {
         // TODO Only handles single generated values. Can multiple occur; any dimension, rows or columns?
         return propagate(() -> {
-            ResultSet resultSet = connection.createStatement().getGeneratedKeys();
+            ResultSet resultSet = session.connection().createStatement().getGeneratedKeys();
             if (resultSet.next()) {
                 //noinspection unchecked
                 V number = (V) resultSet.getObject(1);
@@ -139,4 +133,27 @@ public class DbUtil {
             return Optional.<V>empty();
         });
     }
+
+    public static <C> InsertContinuation<C, Long> insert(GnurfDbSession session, TableCharacteristics<C> table, C entity) {
+        return new InsertContinuation<C, Long>(session, insert(session, table, table.columns().map(c -> addEntityValue(c, entity))));
+    }
+
+    public static class InsertContinuation<C, V> {
+        private final GnurfDbSession session;
+        private final Optional<Long> autogeneratedKey;
+
+        public InsertContinuation(GnurfDbSession session, Optional<Long> autogeneratedKey) {
+            this.session = session;
+            this.autogeneratedKey = autogeneratedKey;
+        }
+
+        public C retrieve() {
+            throw new RuntimeException("Not implemented");
+        }
+
+        public <V extends Number> Optional<V> id() {
+            return getLastGeneratedValue(session);
+        }
+    }
+
 }

@@ -19,31 +19,32 @@ public class ColumnTest {
     @Before
     public void create() {
         session = new GnurfDbSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
-        session.create(EntityNoPK.TABLE, Entity.TABLE);
+        EntityNoPK.TABLE.createTableIfNotExists(session);
+        Entity.TABLE.createTableIfNotExists(session);
     }
 
     @Test
     public void insertAndSelectNoPK() {
-        session.into(EntityNoPK.TABLE).insert(new EntityNoPK("tull", Optional.empty(), 27));
-        assertThat(session.from(EntityNoPK.TABLE).selectAll(), equalTo(list(new EntityNoPK("tull", Optional.empty(), 27))));
+        EntityNoPK.TABLE.insert(session, new EntityNoPK("tull", Optional.empty(), 27));
+        assertThat(EntityNoPK.TABLE.selectAll(session), equalTo(list(new EntityNoPK("tull", Optional.empty(), 27))));
     }
 
     @Test
     public void insert() {
-        session.into(Entity.TABLE).insert(new Entity(Optional.empty(), "tull"));
-        assertThat(session.from(Entity.TABLE).selectAll(), equalTo(list(new Entity(Optional.of(1L), "tull"))));
+        Entity.TABLE.insert(session, new Entity(Optional.empty(), "tull"));
+        assertThat(Entity.TABLE.selectAll(session), equalTo(list(new Entity(Optional.of(1L), "tull"))));
     }
 
     @Test
     public void insertAndGetAutoIncrementedPK() {
         Entity entity = new Entity(Optional.empty(), "tull");
-        assertThat(session.into(Entity.TABLE).insert(entity).id(), equalTo(Optional.of(1L)));
+        assertThat(Entity.TABLE.insert(session, entity).id(), equalTo(Optional.of(1L)));
     }
 
     @Test
     public void insertAndGetNoPK() {
         EntityNoPK entity = new EntityNoPK("tull", Optional.of("tøys"), 27);
-        assertThat(session.into(EntityNoPK.TABLE).insert(entity).id(), equalTo(Optional.empty()));
+        assertThat(EntityNoPK.TABLE.insert(session, entity).id(), equalTo(Optional.empty()));
     }
 
 }
