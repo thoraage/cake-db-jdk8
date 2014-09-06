@@ -1,7 +1,5 @@
 package cakeexample.framework.web;
 
-import cakeexample.framework.web.HttpResponse;
-
 import java.util.Map;
 
 public interface PageHandlerModule {

@@ -1,6 +1,5 @@
 package cakeexample.framework.gnurf;
 
-import cakeexample.model.CakeModelModule;
 import fj.data.List;
 
 public interface TableOperations<C> extends TableCharacteristics<C> {

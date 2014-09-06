@@ -1,6 +1,7 @@
 package cakeexample.framework.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapBuilder<K, V> {
     final private Map<K,V> map;

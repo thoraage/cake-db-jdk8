@@ -1,7 +1,7 @@
 package cakeexample.framework.web;
 
-import cakeexample.framework.SingletonModuleImpl;
 import cakeexample.H2DbConfigurationModule;
+import cakeexample.framework.SingletonModuleImpl;
 import cakeexample.framework.util.HttpUtil;
 import org.junit.After;
 import org.junit.Before;

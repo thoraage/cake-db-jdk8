@@ -1,7 +1,5 @@
 package cakeexample.framework;
 
-import java.util.concurrent.Callable;
-
 public interface SingletonModule {
 
     interface Singleton {

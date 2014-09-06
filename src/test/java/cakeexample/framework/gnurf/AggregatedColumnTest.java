@@ -1,7 +1,7 @@
 package cakeexample.framework.gnurf;
 
-import cakeexample.framework.domain.OneToOneEntity;
 import cakeexample.framework.domain.Entity;
+import cakeexample.framework.domain.OneToOneEntity;
 import fj.data.List;
 import org.h2.Driver;
 import org.junit.Before;

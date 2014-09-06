@@ -9,7 +9,6 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static cakeexample.framework.web.HttpResponse.response;
 
