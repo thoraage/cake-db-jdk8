@@ -6,10 +6,7 @@ import fj.data.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Optional;
 
 import static cakeexample.framework.util.Throwables.propagate;
@@ -72,15 +69,19 @@ public class DbUtil {
 
     public static <C> List<C> selectAll(DatabaseSession session, TableCharacteristics<C> table) {
         return propagate(() -> {
-            List<C> list = List.nil();
-            Statement statement = session.connection().createStatement();
-            String sql = "select * from " + table.name();
-            printSql(session, sql);
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                list = list.cons(table.entityConstructor().apply(table.columns().map(c -> c.withResult(resultSet))));
+            try (Connection connection = session.connection()) {
+                try (Statement statement = connection.createStatement()) {
+                    String sql = "select * from " + table.name();
+                    printSql(session, sql);
+                    try (ResultSet resultSet = statement.executeQuery(sql)) {
+                        List<C> list = List.nil();
+                        while (resultSet.next()) {
+                            list = list.cons(table.entityConstructor().apply(table.columns().map(c -> c.withResult(resultSet))));
+                        }
+                        return list;
+                    }
+                }
             }
-            return list;
         });
     }
 
