@@ -4,9 +4,9 @@ import cakeexample.framework.db.DbConfigurationModule;
 
 public interface GnurfDbSessionModule extends DbConfigurationModule{
 
-    default GnurfDbSession getGnurfDbSession() {
+    default DatabaseSession getGnurfDbSession() {
         DbConfiguration configuration = getConfiguration();
-        return new GnurfDbSession(configuration.getDatabaseDriverClass(), configuration.getDatabaseUrl(), configuration::getShowSql);
+        return new DatabaseSession(configuration.getDatabaseDriverClass(), configuration.getDatabaseUrl(), configuration::getShowSql);
     }
 
 }

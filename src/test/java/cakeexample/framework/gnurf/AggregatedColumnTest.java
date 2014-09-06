@@ -13,11 +13,11 @@ import static org.junit.Assert.assertThat;
 
 public class AggregatedColumnTest {
 
-    private GnurfDbSession session;
+    private DatabaseSession session;
 
     @Before
     public void create() {
-        session = new GnurfDbSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
+        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
         Entity.TABLE.createTableIfNotExists(session);
         OneToOneEntity.TABLE.createTableIfNotExists(session);
     }
