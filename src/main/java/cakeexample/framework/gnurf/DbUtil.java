@@ -1,5 +1,6 @@
 package cakeexample.framework.gnurf;
 
+import cakeexample.framework.domain.AbstractField;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static cakeexample.framework.util.Throwables.propagate;
 
@@ -68,15 +70,20 @@ public class DbUtil {
     }
 
     public static <C> List<C> selectAll(DatabaseSession session, TableCharacteristics<C> table) {
+        Function<Iterable<AbstractField<C, ?>>, C> entityConstructor = table.entityConstructor();
+        return s(session, table).map(entityConstructor::apply);
+    }
+
+    private static <C> List<List<AbstractField<C, ?>>> s(DatabaseSession session, TableCharacteristics<C> table) {
         return propagate(() -> {
             try (Connection connection = session.connection()) {
                 try (Statement statement = connection.createStatement()) {
                     String sql = "select * from " + table.name();
                     printSql(session, sql);
                     try (ResultSet resultSet = statement.executeQuery(sql)) {
-                        List<C> list = List.nil();
+                        List<List<AbstractField<C, ?>>> list = List.nil();
                         while (resultSet.next()) {
-                            list = list.cons(table.entityConstructor().apply(table.columns().map(c -> c.withResult(resultSet))));
+                            list = list.cons(table.columns().map(c -> c.withResult(resultSet)));
                         }
                         return list;
                     }
