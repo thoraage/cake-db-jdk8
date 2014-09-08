@@ -51,7 +51,7 @@ public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
     }
 
     @Override
-    public AbstractField<T, V> withResult(ResultSet resultSet) {
+    public AbstractColumn<T, V> withResult(ResultSet resultSet) {
         //noinspection unchecked
 //        return propagate(() -> field.as(Optional.ofNullable((T) resultSet.getObject(name))));
         throw new NotImplementedException();

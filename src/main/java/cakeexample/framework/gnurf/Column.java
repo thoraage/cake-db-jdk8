@@ -32,16 +32,17 @@ public class Column<C, V> implements AbstractColumn<C, V> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public AbstractField<C, V> withResult(ResultSet resultSet) {
+    public AbstractColumn<C, V> withResult(ResultSet resultSet) {
+        AbstractField<C, V> newField;
         if (field instanceof Field) {
             //noinspection unchecked
-            return propagate(() -> field.as((V) resultSet.getObject(name())));
+            newField = propagate(() -> field.as((V) resultSet.getObject(name())));
         } else if (field instanceof OptionalField) {
-            //noinspection unchecked
-            return field.as((V) Optional.ofNullable(propagate(() -> resultSet.getObject(name()))));
+            newField = field.as((V) Optional.ofNullable(propagate(() -> resultSet.getObject(name()))));
         } else {
             throw new NotImplementedException("Unable to handle field type " + field.getClass());
         }
+        return new Column<>(name, newField, primaryKey, autoIncrement);
     }
 
     @Override

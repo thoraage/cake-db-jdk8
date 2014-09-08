@@ -14,9 +14,9 @@ public interface AbstractColumn<C, V> {
 
     boolean autoIncrement();
 
-    AbstractColumn<C,V> withField(AbstractField<C, V> field);
+    AbstractColumn<C, V> withField(AbstractField<C, V> field);
 
-    AbstractField<C,V> withResult(ResultSet resultSet);
+    AbstractColumn<C, V> withResult(ResultSet resultSet);
 
     Optional<?> columnValue(C entity);
 }
