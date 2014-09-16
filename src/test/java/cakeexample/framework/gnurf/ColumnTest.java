@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static fj.data.List.list;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -18,7 +19,7 @@ public class ColumnTest {
 
     @Before
     public void create() {
-        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
+        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:" + UUID.randomUUID().toString() + ";DB_CLOSE_DELAY=-1", () -> false);
         EntityNoPK.TABLE.createTableIfNotExists(session);
         Entity.TABLE.createTableIfNotExists(session);
     }

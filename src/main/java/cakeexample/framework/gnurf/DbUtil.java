@@ -47,7 +47,13 @@ public class DbUtil {
         sql = "create table if not exists " + table.name() + " (\n" + sql + ")\n";
         final String s = sql;
         printSql(session, sql);
-        propagate(() -> session.connection().createStatement().execute(s));
+        propagate(() -> {
+            try (Connection connection = session.connection()) {
+                try (Statement statement = connection.createStatement()) {
+                    return statement.execute(s);
+                }
+            }
+        });
     }
 
     private static String getH2ColumnType(Class<?> clazz) {
@@ -73,7 +79,8 @@ public class DbUtil {
     public static <C> List<C> selectAll(DatabaseSession session, TableCharacteristics<C> table) {
         Function<Iterable<AbstractField<C, ?>>, C> entityConstructor = table.entityConstructor();
         F<List<AbstractColumn<C, ?>>, List<AbstractField<C, ?>>> findFields = columns -> columns.map(AbstractColumn::field);
-        return selectAllFields(session, table).map(findFields).map(entityConstructor::apply);
+        F<List<AbstractColumn<C, ?>>, List<AbstractColumn<C, ?>>> subEntities = columns -> columns.map(c -> c.retrieveEntity(session));
+        return selectAllFields(session, table).map(subEntities).map(findFields).map(entityConstructor::apply);
     }
 
     private static <C> List<List<AbstractColumn<C, ?>>> selectAllFields(DatabaseSession session, TableCharacteristics<C> table) {
@@ -145,6 +152,7 @@ public class DbUtil {
     }
 
     public static <C> InsertContinuation<C, Long> insert(DatabaseSession session, TableCharacteristics<C> table, C entity) {
+//        table.columns().
         return new InsertContinuation<C, Long>(session, insert(session, table, table.columns().map(c -> addEntityValue(c, entity))));
     }
 

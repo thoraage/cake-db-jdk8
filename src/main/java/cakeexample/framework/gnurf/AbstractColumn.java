@@ -16,7 +16,13 @@ public interface AbstractColumn<C, V> {
 
     AbstractColumn<C, V> withField(AbstractField<C, V> field);
 
-    AbstractColumn<C, V> withResult(ResultSet resultSet);
+    AbstractColumn<C, V> withName(String name);
 
     Optional<?> columnValue(C entity);
+
+    AbstractColumn<C, V> withResult(ResultSet resultSet);
+
+    default AbstractColumn<C, V> retrieveEntity(DatabaseSession session) {
+        return this;
+    }
 }

@@ -5,20 +5,24 @@ import cakeexample.framework.domain.AbstractField;
 import java.sql.ResultSet;
 import java.util.Optional;
 
-public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
+public class OneToOneColumn<C, V> implements AbstractColumn<C, V> {
 
     private final String name;
-    private final AbstractField<T, V> field;
+    private final AbstractField<C, V> field;
+    private final AbstractColumn<V, ?> foreignKey;
+    private final Table<V> foreignTable;
     private final AbstractColumn<V, ?> foreignPrimaryKey;
 
-    private OneToOneColumn(String name, AbstractField<T, V> field, AbstractColumn<V, ?> foreignPrimaryKey) {
+    private OneToOneColumn(String name, AbstractField<C, V> field, AbstractColumn<V, ?> foreignKey, Table<V> foreignTable, AbstractColumn<V, ?> foreignPrimaryKey) {
         this.name = name;
         this.field = field;
+        this.foreignKey = foreignKey;
+        this.foreignTable = foreignTable;
         this.foreignPrimaryKey = foreignPrimaryKey;
     }
 
     public static <T, V> OneToOneColumn<T, V> oneToOne(String name, AbstractField<T, V> field, Table<V> foreignTable, AbstractColumn<V, ?> foreignPrimaryKey) {
-        return new OneToOneColumn<T, V>(name, field, foreignPrimaryKey);
+        return new OneToOneColumn<T, V>(name, field, foreignPrimaryKey.withName(name), foreignTable, foreignPrimaryKey);
     }
 
     public AbstractColumn<?, ?> foreignPrimaryKey() {
@@ -26,7 +30,7 @@ public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
     }
 
     @Override
-    public AbstractField<T, V> field() {
+    public AbstractField<C, V> field() {
         return field;
     }
 
@@ -46,23 +50,32 @@ public class OneToOneColumn<T, V> implements AbstractColumn<T, V> {
     }
 
     @Override
-    public OneToOneColumn<T, V> withField(AbstractField<T, V> field) {
-        return new OneToOneColumn<>(name, field, foreignPrimaryKey);
+    public OneToOneColumn<C, V> withField(AbstractField<C, V> field) {
+        return new OneToOneColumn<>(name, field, foreignPrimaryKey.withName(name), foreignTable, foreignPrimaryKey);
     }
 
     @Override
-    public AbstractColumn<T, V> withResult(ResultSet resultSet) {
-        //noinspection unchecked
-//        return propagate(() -> field.as(Optional.ofNullable((T) resultSet.getObject(name))));
-        throw new NotImplementedException();
+    public AbstractColumn<C, V> withResult(ResultSet resultSet) {
+        return new OneToOneColumn<>(name, field, foreignKey.withResult(resultSet), foreignTable, foreignPrimaryKey);
     }
 
     @Override
-    public Optional<?> columnValue(T entity) {
+    public AbstractColumn<C, V> withName(String name) {
+        return new OneToOneColumn<>(name, field, foreignKey, foreignTable, foreignPrimaryKey);
+    }
+
+    @Override
+    public Optional<?> columnValue(C entity) {
         return field().getter().flatMap(getter -> {
             V innerEntity = getter.f(entity);
             return foreignPrimaryKey.columnValue(innerEntity);
         });
     }
 
+    @Override
+    public AbstractColumn<C, V> retrieveEntity(DatabaseSession session) {
+        // TODO select only the correct row
+        V object = foreignTable.selectAll(session).head();
+        return new OneToOneColumn<>(name, field.as(object), foreignKey, foreignTable, foreignPrimaryKey);
+    }
 }

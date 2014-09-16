@@ -17,7 +17,7 @@ public class AggregatedColumnTest {
 
     @Before
     public void create() {
-        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:", () -> false);
+        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", () -> false);
         Entity.TABLE.createTableIfNotExists(session);
         OneToOneEntity.TABLE.createTableIfNotExists(session);
     }

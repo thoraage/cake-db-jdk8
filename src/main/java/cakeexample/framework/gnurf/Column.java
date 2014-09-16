@@ -46,6 +46,11 @@ public class Column<C, V> implements AbstractColumn<C, V> {
     }
 
     @Override
+    public AbstractColumn<C, V> withName(String name) {
+        return new Column<>(name, field, primaryKey, autoIncrement  );
+    }
+
+    @Override
     public Optional<V> columnValue(C entity) {
         return field.getter().map(getter -> getter.f(entity));
     }
