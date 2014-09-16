@@ -7,6 +7,8 @@ import org.h2.Driver;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static java.util.Optional.empty;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -17,7 +19,8 @@ public class AggregatedColumnTest {
 
     @Before
     public void create() {
-        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", () -> false);
+        // TODO create a solution that rollbacks instead
+        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:" + UUID.randomUUID().toString() + ";DB_CLOSE_DELAY=-1", () -> false);
         Entity.TABLE.createTableIfNotExists(session);
         OneToOneEntity.TABLE.createTableIfNotExists(session);
     }
