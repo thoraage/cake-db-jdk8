@@ -55,6 +55,11 @@ public class OneToOneColumn<C, V> implements AbstractColumn<C, V> {
     }
 
     @Override
+    public OneToOneColumn<C, V> fieldValue(V value) {
+        return new OneToOneColumn<>(name, field.as(value), foreignKey, foreignTable, foreignPrimaryKey);
+    }
+
+    @Override
     public AbstractColumn<C, V> withResult(ResultSet resultSet) {
         return new OneToOneColumn<>(name, field, foreignKey.withResult(resultSet), foreignTable, foreignPrimaryKey);
     }
@@ -65,17 +70,24 @@ public class OneToOneColumn<C, V> implements AbstractColumn<C, V> {
     }
 
     @Override
-    public Optional<?> columnValue(C entity) {
-        return field().getter().flatMap(getter -> {
-            V innerEntity = getter.f(entity);
-            return foreignPrimaryKey.columnValue(innerEntity);
-        });
-    }
-
-    @Override
     public AbstractColumn<C, V> retrieveEntity(DatabaseSession session) {
         // TODO select only the correct row
         V object = foreignTable.selectAll(session).head();
-        return new OneToOneColumn<>(name, field.as(object), foreignKey, foreignTable, foreignPrimaryKey);
+        return fieldValue(object);
     }
+
+    @Override
+    public AbstractColumn<C, V> preInsert(DatabaseSession session) {
+        // TODO (don't remember what; just do it)
+        V entity = field.get();
+        DbUtil.InsertContinuation<V, Long> continuation = foreignTable.insert(session, entity);
+        V object = continuation.retrieve();
+        return fieldValue(object);
+    }
+
+    @Override
+    public Optional<?> columnValue() {
+        return field.value().map(foreignKey::extractFieldValue);
+    }
+
 }

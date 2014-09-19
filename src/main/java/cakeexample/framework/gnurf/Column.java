@@ -32,27 +32,27 @@ public class Column<C, V> implements AbstractColumn<C, V> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public AbstractColumn<C, V> withResult(ResultSet resultSet) {
-        AbstractField<C, V> newField;
+    public Column<C, V> withResult(ResultSet resultSet) {
+        V value;
         if (field instanceof Field) {
             //noinspection unchecked
-            newField = propagate(() -> field.as((V) resultSet.getObject(name())));
+            value = propagate(() -> (V) resultSet.getObject(name()));
         } else if (field instanceof OptionalField) {
-            newField = field.as((V) Optional.ofNullable(propagate(() -> resultSet.getObject(name()))));
+            value = (V) Optional.ofNullable(propagate(() -> resultSet.getObject(name())));
         } else {
             throw new NotImplementedException("Unable to handle field type " + field.getClass());
         }
-        return new Column<>(name, newField, primaryKey, autoIncrement);
+        return fieldValue(value);
     }
 
     @Override
-    public AbstractColumn<C, V> withName(String name) {
+    public Column<C, V> fieldValue(V value) {
+        return new Column<>(name, field.as(value), primaryKey, autoIncrement);
+    }
+
+    @Override
+    public Column<C, V> withName(String name) {
         return new Column<>(name, field, primaryKey, autoIncrement  );
-    }
-
-    @Override
-    public Optional<V> columnValue(C entity) {
-        return field.getter().map(getter -> getter.f(entity));
     }
 
     public Column<C, V> primaryKey(boolean value) {

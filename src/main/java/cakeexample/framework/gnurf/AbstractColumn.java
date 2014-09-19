@@ -16,13 +16,25 @@ public interface AbstractColumn<C, V> {
 
     AbstractColumn<C, V> withField(AbstractField<C, V> field);
 
-    AbstractColumn<C, V> withName(String name);
+    AbstractColumn<C, V> fieldValue(V value);
 
-    Optional<?> columnValue(C entity);
+    AbstractColumn<C, V> withName(String name);
 
     AbstractColumn<C, V> withResult(ResultSet resultSet);
 
+    default Optional<V> extractFieldValue(C entity) {
+        return field().getter().map(getter -> getter.f(entity));
+    }
+
     default AbstractColumn<C, V> retrieveEntity(DatabaseSession session) {
         return this;
+    }
+
+    default AbstractColumn<C, V> preInsert(DatabaseSession session) {
+        return this;
+    }
+
+    default Optional<?> columnValue() {
+        return field().value();
     }
 }
