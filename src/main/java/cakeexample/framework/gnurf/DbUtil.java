@@ -179,4 +179,13 @@ public class DbUtil {
         }
     }
 
+    public static Connection createConnection(String databaseDriverClass, String databaseUrl, boolean autoCommit) {
+        return propagate(() -> {
+            Class.forName(databaseDriverClass);
+            Connection connection = DriverManager.getConnection(databaseUrl);
+            connection.setAutoCommit(autoCommit);
+            return connection;
+        });
+    }
+
 }

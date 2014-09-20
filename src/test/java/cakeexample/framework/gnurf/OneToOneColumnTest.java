@@ -20,7 +20,7 @@ public class OneToOneColumnTest {
     @Before
     public void create() {
         // TODO create a solution that rollbacks instead
-        session = new DatabaseSession(Driver.class.getName(), "jdbc:h2:mem:" + UUID.randomUUID().toString() + ";DB_CLOSE_DELAY=-1", () -> false);
+        session = new NewConnectionPerRequestSession(Driver.class.getName(), "jdbc:h2:mem:" + UUID.randomUUID().toString() + ";DB_CLOSE_DELAY=-1", () -> false);
         Entity.TABLE.createTableIfNotExists(session);
         OneToOneEntity.TABLE.createTableIfNotExists(session);
     }
