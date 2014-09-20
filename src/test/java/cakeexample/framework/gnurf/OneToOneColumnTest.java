@@ -13,7 +13,7 @@ import static java.util.Optional.empty;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class AggregatedColumnTest {
+public class OneToOneColumnTest {
 
     private DatabaseSession session;
 
