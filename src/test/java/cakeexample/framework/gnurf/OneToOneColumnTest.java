@@ -4,10 +4,9 @@ import cakeexample.framework.domain.Entity;
 import cakeexample.framework.domain.OneToOneEntity;
 import fj.data.List;
 import org.h2.Driver;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.UUID;
 
 import static java.util.Optional.empty;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -19,10 +18,14 @@ public class OneToOneColumnTest {
 
     @Before
     public void create() {
-        // TODO create a solution that rollbacks instead
-        session = new NewConnectionPerRequestSession(Driver.class.getName(), "jdbc:h2:mem:" + UUID.randomUUID().toString() + ";DB_CLOSE_DELAY=-1", () -> false);
+        session = new PerpetualConnectionSession(Driver.class.getName(), "jdbc:h2:mem:test", () -> false);
         Entity.TABLE.createTableIfNotExists(session);
         OneToOneEntity.TABLE.createTableIfNotExists(session);
+    }
+
+    @After
+    public void rollback() throws Exception {
+        session.connection().rollback();
     }
 
     @Test
